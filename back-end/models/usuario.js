@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-var Usuarios = mongoose.model('usuarios', {
+var Usuario = mongoose.model('usuario', {
     nombre: {type: String},
     apellido: {type: String},
     email: {type: String},
@@ -11,4 +11,4 @@ var Usuarios = mongoose.model('usuarios', {
     puntos: {type: Number} 
 });
 
-module.exports = {Usuarios:Usuarios};
+module.exports = {Usuario:Usuario};
