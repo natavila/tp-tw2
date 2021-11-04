@@ -2,7 +2,6 @@ const express = require('express');
 var { Usuario } = require('../models/usuario');
 var router = express.Router();
 
-// Lleva a la ruta localhost:3000/usuario/list
 router.get('/', async (req, res) =>{
     
     try {
@@ -22,7 +21,6 @@ router.get('/:id', async (req, res) =>{
     try {
 
         var usuario = await Usuario.findById(id);  
-
         if(!usuario) 
             res.send({mensaje: 'No existe el usuario ' + id}) 
         else    
@@ -35,10 +33,10 @@ router.get('/:id', async (req, res) =>{
 
 router.post('/', async (req, res) => {
 
-    var { nombre, apellido, email, contraseña, direccion, edad, preferencias, puntos } = req.body;
+    var { nombre, apellido, email, contraseña, direccion, fecha_nacimiento, preferencias, puntos } = req.body;
 
     var usuario = new Usuario({
-        nombre, apellido, email, contraseña, direccion, edad, preferencias, puntos
+        nombre, apellido, email, contraseña, direccion, fecha_nacimiento, preferencias, puntos
     });
 
     try {

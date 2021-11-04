@@ -6,7 +6,7 @@ var Usuario = mongoose.model('usuarios', {
     email: {type: String, required: [true, "El email del usuario es obligatorio"]},
     contraseña: {type: String, required: [true, "La contraseña del usuario es obligatorio"]},
     direccion: {type: String},
-    nacimiento: {type: Date},
+    fecha_nacimiento: {type: Date, /*required: [true, "La fecha de nacimiento del usuario es obligatorio"]*/},
     preferencias: {type: String},
     puntos: {type: Number, default: 0} 
 });
