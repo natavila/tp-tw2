@@ -10,7 +10,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegistroComponent } from './components/registro/registro.component';
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -25,6 +24,7 @@ import { RegistroComponent } from './components/registro/registro.component';
     BrowserAnimationsModule,
     ToastrModule.forRoot()
   ],
+
   providers: [],
   bootstrap: [AppComponent]
 })
