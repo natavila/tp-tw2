@@ -1,16 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 
-import { UsuariosService } from '../shared/usuarios.service';
+import { UsuarioService } from '../services/usuario.service';
 
 @Component({
   selector: 'app-usuarios',
   templateUrl: './usuarios.component.html',
   styleUrls: ['./usuarios.component.css'],
-  providers: [UsuariosService]
+  providers: [UsuarioService]
 })
 export class UsuariosComponent implements OnInit {
 
-  constructor(private usuariosService: UsuariosService) { }
+  constructor(private usuariosService: UsuarioService) { }
 
   ngOnInit(): void {
   }
