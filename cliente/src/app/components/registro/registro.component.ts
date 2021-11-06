@@ -3,17 +3,19 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Usuario } from 'src/app/models/usuario';
+import { UsuarioService } from 'src/app/services/usuario.service';
 
 
 @Component({
   selector: 'app-registro',
   templateUrl: './registro.component.html',
-  styleUrls: ['./registro.component.css']
+  styleUrls: ['./registro.component.css'],
+  providers: [UsuarioService]
 })
 export class RegistroComponent implements OnInit {
   registroForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private router: Router, private toastr: ToastrService) { 
+  constructor(private fb: FormBuilder, private router: Router, private toastr: ToastrService, private usuarioService: UsuarioService) { //Inyeccion de servicios
     this.registroForm = this.fb.group({
       nombre: ['', Validators.required],
       apellido: ['', Validators.required],
@@ -41,8 +43,15 @@ export class RegistroComponent implements OnInit {
       preferencias: this.registroForm.get('preferencias').value
     }
 
-      this.toastr.success('El registro fue exitoso!', 'Usuario registrado');
-      this.router.navigate(['/login']);
+      this.usuarioService.registrarUsuario(USUARIO).subscribe(data => {
+        this.toastr.success('El registro fue exitoso!', 'Usuario registrado');
+        this.router.navigate(['/login']);
+      }, error => {
+        console.log("No se pudo registrar", error);
+        this.registroForm.reset();
+      });
+
+      
   }
 
 }

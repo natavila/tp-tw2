@@ -6,7 +6,7 @@ import { RegistroComponent } from './components/registro/registro.component';
 
 
 const routes: Routes = [
-  { path: '', component: RegistroComponent },
+  { path: '', component: LoginComponent },
   { path: 'login', component: LoginComponent },
   { path: 'registro', component: RegistroComponent },
   { path: '**', redirectTo: 'login', pathMatch: 'full' } //Cuando se ingresa una url que no existe lo redirecciona al login
