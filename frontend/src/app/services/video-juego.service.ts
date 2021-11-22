@@ -8,12 +8,12 @@ import { Observable } from 'rxjs';
 
 export class VideoJuegoService {
 
-  url = 'http://localhost:3000/';
+  url = 'http://localhost:3000/video-juego';
 
   constructor(private http: HttpClient) {
   }
 
   obtenerVideoJuegos(): Observable<any>{
-    return this.http.get(`${this.url}videojuego`);
+    return this.http.get(this.url);
   }
 }

@@ -26,7 +26,7 @@ export class VideoJuegoComponent implements OnInit {
         this.videoJuegos = data;
       },
       (error) => {
-
+        console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
       }
     );
   }
