@@ -32,8 +32,7 @@ const Usuario = mongoose.model('usuario', {
         default: 'Pendiente'
     },
     codigo: { 
-        type: String, 
-        unique: true 
+        type: String
     }
 });
 

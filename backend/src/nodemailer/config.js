@@ -1,4 +1,4 @@
-var nodemailer = require('nodemailer');
+const nodemailer = require('nodemailer');
 
 const mail = {
   user: 'avila.nataly12@gmail.com',
@@ -20,4 +20,3 @@ const transporter = nodemailer.createTransport({
   });
 
   module.exports = { transporter }
-  
