@@ -1,58 +1,145 @@
-<div class="container mt-5">
-    <form class="row g-3" [formGroup]='registroForm' (ngSubmit)='registrarUsuario()'>
-        <div class="col-6">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="inputEmail4" formControlName='email'>
-        <div class="text-danger" *ngIf="registroForm.get('email').hasError('required') && registroForm.get('email').touched">
-            <span>El email <strong>es obligatario</strong></span>
-        </div>
-        </div>
-        <div class="col-6">
-            <label for="contraseña" class="form-label">Contraseña</label>
-            <input type="password" class="form-control" id="inputPassword4" formControlName='contraseña'>
-        <div class="text-danger" *ngIf="registroForm.get('contraseña').hasError('required') && registroForm.get('contraseña').touched">
-            <span>La contraseña <strong>es obligatario</strong></span>
-        </div>
-        </div>
-        <div class="col-6">
-            <label for="nombre" class="form-label">Nombre</label>
-            <input type="text" class="form-control" id="inputAddress" formControlName='nombre'>
-        <div class="text-danger" *ngIf="registroForm.get('nombre').hasError('required') && registroForm.get('nombre').touched">
-            <span>El nombre <strong>es obligatario</strong></span>
-        </div>
-        </div>
-        <div class="col-6">
-            <label for="apellido" class="form-label">Apellido</label>
-            <input type="text" class="form-control" id="inputAddress2" formControlName='apellido'>
-        <div class="text-danger" *ngIf="registroForm.get('apellido').hasError('required') && registroForm.get('apellido').touched">
-            <span>El apellido <strong>es obligatario</strong></span>
-        </div>
-        </div>
-        <div class="col-6">
-            <label for="direccion" class="form-label">Direccion</label>
-            <input type="text" class="form-control" id="inputAddress2" formControlName='direccion'>
-        <div class="text-danger" *ngIf="registroForm.get('direccion').hasError('required') && registroForm.get('direccion').touched">
-            <span>La direccion <strong>es obligataria</strong></span>
-        </div>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="registro.component.css" rel="stylesheet">
+
+    <title>Registro</title>
+  </head>
+  <body>
+   <section class="contact-box">
+       <div class="row no-gutters bg-dark">
+           <div class="col-xl-5 col-lg-12 register-bg">
+           </div>
+           <div class="col-xl-7 col-lg-12 d-flex">
+                <div class="container align-self-center p-6">
+                    <h1 class="font-weight-bold mb-3">Crea tu cuenta gratis</h1>
+                    <p class="text-muted mb-5">Ingresa la siguiente información para registrarte.</p>
+                    <form [formGroup]='registroForm' (ngSubmit)='registrarUsuario()'>
+                        <div class="form-row mb-2">
+                            <div class="form-group col-md-6">
+                                <label for="nombre" class="form-label">Nombre <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" formControlName='nombre' placeholder="Tu nombre" required>
+                                <div class="text-danger" *ngIf="registroForm.get('nombre').hasError('required') && registroForm.get('nombre').touched">
+                                    <span>El nombre <strong>es obligatario.</strong></span>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="apellido" class="font-weight-bold">Apellido <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" formControlName='apellido' placeholder="Tu apellido">
+                                <div class="text-danger" *ngIf="registroForm.get('apellido').hasError('required') && registroForm.get('apellido').touched">
+                                    <span>El apellido <strong>es obligatario.</strong></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="email" class="font-weight-bold">Correo electrónico <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" formControlName='email' placeholder="Ingresa tu correo electrónico">
+                            <div class="text-danger" *ngIf="registroForm.get('email').hasError('required') && registroForm.get('email').touched">
+                                <span>El correo electrónico <strong>es obligatario</strong></span>
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="contrasena" class="font-weight-bold">Contraseña <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" formControlName='contrasena' placeholder="Ingresa una contraseña">
+                            <div class="text-danger" *ngIf="registroForm.get('contrasena').hasError('required') && registroForm.get('contrasena').touched">
+                                <span>La contraseña <strong>es obligataria</strong></span>
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="direccion" class="font-weight-bold">Dirección <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" formControlName='direccion' placeholder="Ingresa una dirección">
+                            <div class="text-danger" *ngIf="registroForm.get('direccion').hasError('required') && registroForm.get('direccion').touched">
+                                <span>La dirección <strong>es obligataria</strong></span>
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="fecha_nacimiento" class="font-weight-bold" formControlName='fecha_nacimiento'>Fecha de nacimiento <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" placeholder="Tu fecha de nacimiento">
+                            <div class="text-danger" *ngIf="registroForm.get('fecha_nacimiento').hasError('required') && registroForm.get('fecha_nacimiento').touched">
+                                <span>La fecha de nacimiento <strong>es obligataria</strong></span>
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="preferencias" class="font-weight-bold" >¿Qué tipo de juegos te interesan? <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" formControlName='preferencias'>
+                            <div class="text-danger" *ngIf="registroForm.get('preferencias').hasError('required') && registroForm.get('preferencias').touched">
+                                <span>Seleccionar al menos una preferencia.</span>
+                            </div>
+                        </div>
+                        <button type="submit" [disabled]="registroForm.invalid" class="btn btn-primary">Regístrate</button>
+                    </form>
+                </div>
+           </div>
+       </div>
+   </section> 
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  </body>
+</html>
+<!--<body> 
+    <div class="container mt-5 center">
+        <h1>Registro</h1>
+        <form class="row g-3" [formGroup]='registroForm' (ngSubmit)='registrarUsuario()'>
+            <div class="col-6">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="inputAddress" formControlName='nombre'>
+            <div class="text-danger" *ngIf="registroForm.get('nombre').hasError('required') && registroForm.get('nombre').touched">
+                <span>El nombre <strong>es obligatario</strong></span>
             </div>
-        <div class="col-6">
-            <label for="fecha_nacimiento" class="form-label">Fecha de nacimiento</label>
-            <input type="date" class="form-control" id="inputCity" formControlName='fecha_nacimiento'>
-        <div class="text-danger" *ngIf="registroForm.get('fecha_nacimiento').hasError('required') && registroForm.get('fecha_nacimiento').touched">
-            <span>La fecha de nacimiento <strong>es obligataria</strong></span>
-        </div>
-        </div>
-        <div class="col-md-4">
-            <label for="preferencias" class="form-label">Preferencias</label>
-            <input type="text" class="form-control" id="inputZip" formControlName='preferencias'>
-            <div class="text-danger" *ngIf="registroForm.get('preferencias').hasError('required') && registroForm.get('preferencias').touched">
-                <span>La preferencia <strong>es obligataria</strong></span>
             </div>
-        </div>
-        <div class="col-12">
-        </div>
-        <div class="col-12">
-        <button type="submit" [disabled]="registroForm.invalid" class="btn btn-primary">Sign in</button>
-        </div>
-    </form>
-</div>
+            <div class="col-6">
+                <label for="apellido" class="form-label">Apellido</label>
+                <input type="text" class="form-control" id="inputAddress2" formControlName='apellido'>
+            <div class="text-danger" *ngIf="registroForm.get('apellido').hasError('required') && registroForm.get('apellido').touched">
+                <span>El apellido <strong>es obligatario</strong></span>
+            </div>
+            </div>
+            <div class="col-12">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="inputEmail4" formControlName='email'>
+            <div class="text-danger" *ngIf="registroForm.get('email').hasError('required') && registroForm.get('email').touched">
+                <span>El email <strong>es obligatario</strong></span>
+            </div>
+            </div>
+            <div class="col-12">
+                <label for="contraseña" class="form-label">Contraseña</label>
+                <input type="password" class="form-control" id="inputPassword4" formControlName='contrasena'>
+            <div class="text-danger" *ngIf="registroForm.get('contrasena').hasError('required') && registroForm.get('contrasena').touched">
+                <span>La contraseña <strong>es obligataria</strong></span>
+            </div>
+            </div>
+            <div class="col-12">
+                <label for="direccion" class="form-label">Direccion</label>
+                <input type="text" class="form-control" id="inputAddress2" formControlName='direccion'>
+            <div class="text-danger" *ngIf="registroForm.get('direccion').hasError('required') && registroForm.get('direccion').touched">
+                <span>La direccion <strong>es obligataria</strong></span>
+            </div>
+                </div>
+            <div class="col-6">
+                <label for="fecha_nacimiento" class="form-label">Fecha de nacimiento</label>
+                <input type="date" class="form-control" id="inputCity" formControlName='fecha_nacimiento'>
+            <div class="text-danger" *ngIf="registroForm.get('fecha_nacimiento').hasError('required') && registroForm.get('fecha_nacimiento').touched">
+                <span>La fecha de nacimiento <strong>es obligataria</strong></span>
+            </div>
+            </div>
+            <div class="col-6">
+                <label for="preferencias" class="form-label">Preferencias</label>
+                <input type="text" class="form-control" id="inputZip" formControlName='preferencias'>
+                <div class="text-danger" *ngIf="registroForm.get('preferencias').hasError('required') && registroForm.get('preferencias').touched">
+                    <span>La preferencia <strong>es obligataria</strong></span>
+                </div>
+            </div>
+            <div class="col-12">
+            <button type="submit" [disabled]="registroForm.invalid" class="btn btn-primary">Sign in</button>
+            </div>
+        </form>
+    </div> 
+</body>--> 

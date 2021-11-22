@@ -14,9 +14,10 @@ import { RegistroComponent } from './components/registro/registro.component';
 import { VideoJuegoComponent } from './components/video-juego/video-juego.component';
 
 import { CommonModule } from "@angular/common";
+import { ConfirmacionComponent } from './components/confirmacion/confirmacion.component';
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent, RegistroComponent, VideoJuegoComponent],
+  declarations: [AppComponent, LoginComponent, RegistroComponent, VideoJuegoComponent, ConfirmacionComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

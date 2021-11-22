@@ -1,6 +1,13 @@
 const { Usuario } = require('../models/usuario');
+const { transporter } = require('../nodemailer/config');
+const { config } = require('../auth/config');
 
-const usuarioList = async (req, res) =>{
+var bcrypt = require('bcrypt');
+var jwt = require("jsonwebtoken");
+
+var BCRYPT_SALT_ROUNDS = 12;
+
+const usuarioList = async (req, res) => {
     
     try {
         
@@ -12,7 +19,7 @@ const usuarioList = async (req, res) =>{
     }
 };
 
-const usuarioGet = async (req, res) =>{
+const usuarioGet = async (req, res) => {
 
     const { id } = req.params;
 
@@ -32,23 +39,54 @@ const usuarioGet = async (req, res) =>{
 
 const usuarioPost = async (req, res) => {
 
-    const { nombre, apellido, email, contrasena, direccion, preferencias, puntos } = req.body;
+    const { nombre, apellido, email, contrasena, direccion, preferencias, puntos, estado, codigo } = req.body;
 
     const usuario = new Usuario({
-        nombre, apellido, email, contrasena, direccion, preferencias, puntos
+        nombre, apellido, email, contrasena, direccion, preferencias, puntos, estado, codigo
     });
 
-    try {
+    const correo = await Usuario.findOne({ email });
 
-        const usuarioCreado = await usuario.save();
-        res.send({ id: usuarioCreado.id, mensaje: 'Se creo el usuario' });
-    } catch (error) {
+        try {
+
+            if(correo){
+                res.send({ mensaje: 'El correo ingresado ya se encuentra registrado' });
+                if (contrasena.length < 8) {
+                    res.send({ mensaje: 'La contraseña debe contener al menos 8 caracteres' });
+                }
+                
+            }else{
+
+                    const token = jwt.sign({_id: usuario._id}, 'secretkey')
+
+                    bcrypt.hash(contrasena, BCRYPT_SALT_ROUNDS)
+                    .then(async function(hashedPassword){
+                        usuario.contrasena = hashedPassword;
+                        usuario.codigo = token;
+
+                        const usuarioCreado = await usuario.save();
+                        res.send({ id: usuarioCreado.id, mensaje: 'Se creo el usuario', token: token});
+                    });
+
+                    await transporter.sendMail({
+                        from: '"Fred Foo 👻" <avila.nataly12@gmail.com>', // sender address
+                        to: usuario.email, // list of receivers
+                        subject: "Hello ✔", // Subject line
+                        html: `<h1>Email Confirmation</h1>
+                        <h2>Hello ${nombre}</h2>
+                        <p>Thank you for subscribing. Please confirm your email by clicking on the following link</p>
+                        <a href=http://localhost:4200/> Click here</a>
+                        </div>`, // html body
+                      });
+                }
+        
+        } catch (error) {
 
         res.send({ mensaje: error.message });
     }  
 };
 
-const usuarioPut = async (req, res) =>{
+const usuarioPut = async (req, res) => {
 
     const { id } = req.params;
     const { __id, ...restoDelUsuario } = req.body;

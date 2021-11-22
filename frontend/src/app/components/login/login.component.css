@@ -13,7 +13,7 @@ body{
     background: linear-gradient(to right, #1565C0, #b92b27);  W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     background-color: black;
     height: 100vh;
-  overflow: hidden;
+    overflow: hidden;
 }
 .center{
   position: absolute;

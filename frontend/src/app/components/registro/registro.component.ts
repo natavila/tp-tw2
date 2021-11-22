@@ -22,13 +22,13 @@ export class RegistroComponent implements OnInit {
   ) {
     //Inyeccion de servicios
     this.registroForm = this.fb.group({
-      nombre: ['', Validators.required],
-      apellido: ['', Validators.required],
       email: ['', Validators.required, Validators.email],
-      contraseña: ['', Validators.required, Validators.minLength(8)],
-      direccion: ['', Validators.required],
-      fecha_nacimiento: ['', Validators.required],
-      preferencias: ['', Validators.required],
+      contrasena: ['', Validators.required, Validators.minLength(8)],
+      nombre: ['', Validators.required, Validators.nullValidator],
+      apellido: ['', Validators.required, Validators.nullValidator],    
+      direccion: ['', Validators.required, Validators.minLength(8)],
+      fecha_nacimiento: ['', Validators.required, Validators.nullValidator],
+      preferencias: ['', Validators.required, Validators.nullValidator],
     });
   }
 
@@ -39,7 +39,7 @@ export class RegistroComponent implements OnInit {
       nombre: this.registroForm.get('nombre').value,
       apellido: this.registroForm.get('apellido').value,
       email: this.registroForm.get('email').value,
-      contraseña: this.registroForm.get('contraseña').value,
+      contrasena: this.registroForm.get('contrasena').value,
       direccion: this.registroForm.get('direccion').value,
       //fecha_nacimiento: this.registroForm.get('fecha_nacimiento')
       preferencias: this.registroForm.get('preferencias').value,

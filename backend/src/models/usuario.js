@@ -28,7 +28,16 @@ const Usuario = mongoose.model('usuario', {
     },
     puntos: {
         type: Number
-    } 
+    },
+    estado: {
+        type: String,
+        Enumerator: ['Pendiente', 'Activo'],
+        default: 'Pendiente'
+    },
+    codigo: { 
+        type: String, 
+        unique: true 
+    }
 });
 
 module.exports = { Usuario };

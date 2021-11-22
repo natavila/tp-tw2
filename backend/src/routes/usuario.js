@@ -5,7 +5,9 @@ const { usuarioGet, usuarioList, usuarioPost, usuarioPut, usuarioDelete } = requ
 router.get('/', usuarioList);
 router.get('/:id', usuarioGet);
 router.post('/', usuarioPost);
+router.post('/:codigo', usuarioPost);
 router.put('/:id', usuarioPut);
 router.delete('/:id', usuarioDelete);
 
 module.exports = router;
+
