@@ -113,7 +113,7 @@ const usuarioDelete = async (req, res) => {
 };
 
 /*
- * Helpers de los metodos de usuario
+ * Helpers de los controladores de usuario
 */
 const ocultarPropiedades = usuario => {
     const { __v, contrasena, _id, ...restoDelUsuario } = usuario._doc;
