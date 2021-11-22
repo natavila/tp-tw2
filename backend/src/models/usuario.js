@@ -20,9 +20,6 @@ const Usuario = mongoose.model('usuario', {
     direccion: {
         type: String
     },
-    edad: {
-        type: Number
-    },
     preferencias: {
         type: Array
     },
