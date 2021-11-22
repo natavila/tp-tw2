@@ -1,4 +1,6 @@
 const { Usuario } = require('../models/usuario');
+const bcrypt = require('bcrypt');
+const { transporter } = require('../nodemailer/config');
 
 /*
  * Controlador para listar todos los usuarios
@@ -55,10 +57,36 @@ const usuarioPost = async (req, res) => {
     const usuario = new Usuario(req.body);
 
     try {
+
+        const correo = await Usuario.findOne({ email });
+
+        if(correo){
+            res.send({ mensaje: 'El correo ingresado ya se encuentra registrado' });
+            return;        
+        }
+
+        const codigo =  Math.round(Math.random()*999999);
+        var BCRYPT_SALT_ROUNDS = 12;
+
+        bcrypt.hash(contrasena, BCRYPT_SALT_ROUNDS)
+        .then(async function(hashedPassword){
+            usuario.contrasena = hashedPassword;
+        });
+
+        usuario.codigo = codigo;
         const usuarioCreado = await usuario.save();
-        res.status(200).send({ id: usuarioCreado.id, mensaje: 'Se creo el usuario' });
+        res.send({ id: usuarioCreado.id, mensaje: 'Se creo el usuario' });
+
+        await transporter.sendMail({
+            from: '"Fred Foo 👻" <avila.nataly12@gmail.com>', // sender address
+            to: usuario.email, // list of receivers
+            subject: "Hello ✔", // Subject line
+            html: `<h1>Email Confirmation</h1>
+            <h2>Hello ${nombre}</h2>
+            <p>Thank you for subscribing. Please confirm your email by clicking on the following link. Codigo ${codigo}</p>`, // html body
+        });
     } catch (error) {
-        res.status(500).send({ mensaje: error.message });
+        res.send({ mensaje: error.message });
     }  
 };
 
