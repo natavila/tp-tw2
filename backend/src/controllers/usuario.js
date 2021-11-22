@@ -58,32 +58,33 @@ const usuarioPost = async (req, res) => {
         const usuarioConEmailProporcionado = await Usuario.findOne({ email: req.body.email });
 
         if(usuarioConEmailProporcionado){
-            res.send({ mensaje: 'El correo ingresado ya se encuentra registrado' });
+            res.status(400).send({ mensaje: 'El correo ingresado ya se encuentra registrado' });
             return;        
         }
 
         const usuario = new Usuario(req.body);
 
         const BCRYPT_SALT_ROUNDS = 12;
-        const contrasenaEncriptada = await bcrypt.hash(req.body.contrasena, BCRYPT_SALT_ROUNDS)
-        usuario.contrasena = contrasenaEncriptada;
-
         const codigo =  Math.round(Math.random()*999999);
+
+        const contrasenaEncriptada = await bcrypt.hash(req.body.contrasena, BCRYPT_SALT_ROUNDS)
+
+        usuario.contrasena = contrasenaEncriptada;
         usuario.codigo = codigo;
 
         const usuarioCreado = await usuario.save();
-        res.send({ id: usuarioCreado.id, mensaje: 'Se creo el usuario' });
+        res.status(200).send({ id: usuarioCreado.id, mensaje: 'Se creo el usuario' });
 
         await transporter.sendMail({
-            from: '"VideoJuegos Store 👻" <avila.nataly12@gmail.com>', // sender address
-            to: usuario.email, // list of receivers
-            subject: "Codigo de verificacion✔ - VideoJuegos Store", // Subject line
+            from: '"VideoJuegos Store 👻" <avila.nataly12@gmail.com>',
+            to: usuario.email,
+            subject: "Codigo de verificacion✔ - VideoJuegos Store",
             html: `<h1>Confirmacion de correo electronico</h1>
             <h2>Hola ${usuario.nombre}</h2>
-            <p>Para validar tu cuenta, ingresa el siguiente codigo en la aplicacion: <strong>${codigo}</strong></p>`, // html body
+            <p>Para validar tu cuenta, ingresa el siguiente codigo en la aplicacion: <strong>${codigo}</strong></p>`
         });
     } catch (error) {
-        res.send({ mensaje: error.message });
+        res.status(500).send({ mensaje: error.message });
     }  
 };
 
