@@ -73,10 +73,11 @@ const usuarioPost = async (req, res) => {
         usuario.codigo = codigo;
 
         const usuarioCreado = await usuario.save();
+
         res.status(200).send({ id: usuarioCreado.id, mensaje: 'Se creo el usuario' });
 
         await transporter.sendMail({
-            from: '"VideoJuegos Store 👻" <avila.nataly12@gmail.com>',
+            from: '"VideoJuegos Store" <avila.nataly12@gmail.com>',
             to: usuario.email,
             subject: "Codigo de verificacion✔ - VideoJuegos Store",
             html: `<h1>Confirmacion de correo electronico</h1>
