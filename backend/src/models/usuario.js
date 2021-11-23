@@ -18,10 +18,12 @@ const Usuario = mongoose.model('usuario', {
         required: [true, "La contrasena del usuario es obligatoria"]
     },
     direccion: {
-        type: String
+        type: String,
+        required: [true, "La direccion del usuario es obligatoria"]
     },
     preferencias: {
-        type: Array
+        type: Array,
+        required: [true, "Las preferencias del usuario son obligatorias"]
     },
     puntos: {
         type: Number
