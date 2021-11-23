@@ -1,5 +1,6 @@
-const { Usuario } = require('../models/usuario');
 const bcrypt = require('bcrypt');
+const JWT = require('jsonwebtoken');
+const { Usuario } = require('../models/usuario');
 const { transporter } = require('../nodemailer/config');
 
 /*
@@ -74,7 +75,9 @@ const usuarioPost = async (req, res) => {
 
         const usuarioCreado = await usuario.save();
 
-        res.status(200).send({ id: usuarioCreado.id, mensaje: 'Se creo el usuario' });
+        const token = JWT.sign({ _id: usuarioCreado._id }, 'secretkey');
+
+        res.status(200).send({ id: usuarioCreado.id, mensaje: 'Se creo el usuario', token });
 
         await transporter.sendMail({
             from: '"VideoJuegos Store" <avila.nataly12@gmail.com>',
@@ -87,6 +90,26 @@ const usuarioPost = async (req, res) => {
     } catch (error) {
         res.status(500).send({ mensaje: error.message });
     }  
+};
+
+/*
+ * Controlador para loguear un usuario en la aplicacion
+*/
+const usuarioLogin = async (req, res) => {
+
+    const { email, contrasena } = req.body;
+
+    if(!email || !contrasena)
+        return res.status(400).send({ mensaje: 'El email y la contrasena son requeridos para loguearse' })
+
+    const usuario = await Usuario.findOne({ email });
+
+    if(!usuario || !bcrypt.compareSync(contrasena, usuario.contrasena))
+        return res.status(400).send({ mensaje: 'Email o contrasena incorrecta' });
+
+    const token = JWT.sign({ _id: usuario._id }, 'secretkey');
+
+    res.status(200).send({ token });
 };
 
 /*
@@ -172,4 +195,6 @@ const poseeLasPropiedadesRequeridas = propiedades => {
     return existenTodasLasPropiedadesRequeridas;
 }
 
-module.exports = { usuarioList, usuarioGet, usuarioPost, usuarioPut, usuarioDelete }
+module.exports = { 
+    usuarioList, usuarioGet, usuarioPost, usuarioPut, usuarioDelete, usuarioLogin 
+}
