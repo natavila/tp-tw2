@@ -196,5 +196,5 @@ const poseeLasPropiedadesRequeridas = propiedades => {
 }
 
 module.exports = { 
-    usuarioList, usuarioGet, usuarioPost, usuarioPut, usuarioDelete, usuarioLogin 
+    usuarioList, usuarioGet, usuarioPost, usuarioLogin, usuarioPut, usuarioDelete 
 }
