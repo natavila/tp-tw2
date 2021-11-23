@@ -7,8 +7,6 @@ const router = express.Router();
 router.get('/', usuarioList);
 router.get('/:id', usuarioGet);
 router.post('/', usuarioPost);
-router.post('/:codigo', usuarioPost);
-router.put('/:id', usuarioPut);
 router.post('/login', usuarioLogin);
 router.put('/:id', validarJwt, usuarioPut);
 router.delete('/:id', usuarioDelete);

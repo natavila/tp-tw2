@@ -1,7 +1,8 @@
-const { Usuario } = require('../models/usuario');
 const bcrypt = require('bcrypt');
+const JWT = require('jsonwebtoken');
+const { Usuario } = require('../models/usuario');
 const { transporter } = require('../nodemailer/config');
-    
+
 /*
  * Controlador para listar todos los usuarios
 */
@@ -44,44 +45,71 @@ const usuarioGet = async (req, res) =>{
 */
 const usuarioPost = async (req, res) => {
 
-    const { nombre, apellido, email, contrasena, direccion, preferencias, puntos, estado, codigo } = req.body;
+    if(!poseeLasPropiedadesRequeridas(req.body)) {
+        res.status(400).send({ mensaje: 'Las propiedades [ nombre - apellido - email - contrasena ] son requeridas' });
+        return;
+    }
 
-    const usuario = new Usuario({
-        nombre, apellido, email, contrasena, direccion, preferencias, puntos, estado, codigo
-    });
+    if(!esEmailValido(req.body.email)) {
+        res.status(400).send({ mensaje: `El email ${req.body.email} es invalido` });
+        return;
+    }
 
     try {
+        const usuarioConEmailProporcionado = await Usuario.findOne({ email: req.body.email });
 
-        const correo = await Usuario.findOne({ email });
-
-        if(correo){
-            res.send({ mensaje: 'El correo ingresado ya se encuentra registrado' });
+        if(usuarioConEmailProporcionado){
+            res.status(400).send({ mensaje: 'El correo ingresado ya se encuentra registrado' });
             return;        
         }
 
+        const usuario = new Usuario(req.body);
+
+        const BCRYPT_SALT_ROUNDS = 12;
         const codigo =  Math.round(Math.random()*999999);
-        var BCRYPT_SALT_ROUNDS = 12;
 
-        bcrypt.hash(contrasena, BCRYPT_SALT_ROUNDS)
-        .then(async function(hashedPassword){
-            usuario.contrasena = hashedPassword;
-        });
+        const contrasenaEncriptada = await bcrypt.hash(req.body.contrasena, BCRYPT_SALT_ROUNDS)
 
+        usuario.contrasena = contrasenaEncriptada;
         usuario.codigo = codigo;
+
         const usuarioCreado = await usuario.save();
-        res.send({ id: usuarioCreado.id, mensaje: 'Se creo el usuario' });
+
+        const token = JWT.sign({ _id: usuarioCreado._id }, 'secretkey');
+
+        res.status(200).send({ id: usuarioCreado.id, mensaje: 'Se creo el usuario', token });
 
         await transporter.sendMail({
-            from: '"Fred Foo 👻" <avila.nataly12@gmail.com>', // sender address
-            to: usuario.email, // list of receivers
-            subject: "Hello ✔", // Subject line
-            html: `<h1>Email Confirmation</h1>
-            <h2>Hello ${nombre}</h2>
-            <p>Thank you for subscribing. Please confirm your email by clicking on the following link. Codigo ${codigo}</p>`, // html body
+            from: '"VideoJuegos Store" <avila.nataly12@gmail.com>',
+            to: usuario.email,
+            subject: "Codigo de verificacion✔ - VideoJuegos Store",
+            html: `<h1>Confirmacion de correo electronico</h1>
+            <h2>Hola ${usuario.nombre}</h2>
+            <p>Para validar tu cuenta, ingresa el siguiente codigo en la aplicacion: <strong>${codigo}</strong></p>`
         });
     } catch (error) {
-        res.send({ mensaje: error.message });
+        res.status(500).send({ mensaje: error.message });
     }  
+};
+
+/*
+ * Controlador para loguear un usuario en la aplicacion
+*/
+const usuarioLogin = async (req, res) => {
+
+    const { email, contrasena } = req.body;
+
+    if(!email || !contrasena)
+        return res.status(400).send({ mensaje: 'El email y la contrasena son requeridos para loguearse' })
+
+    const usuario = await Usuario.findOne({ email });
+
+    if(!usuario || !bcrypt.compareSync(contrasena, usuario.contrasena))
+        return res.status(400).send({ mensaje: 'Email o contrasena incorrecta' });
+
+    const token = JWT.sign({ _id: usuario._id }, 'secretkey');
+
+    res.status(200).send({ token });
 };
 
 /*
@@ -167,4 +195,6 @@ const poseeLasPropiedadesRequeridas = propiedades => {
     return existenTodasLasPropiedadesRequeridas;
 }
 
-module.exports = { usuarioList, usuarioGet, usuarioPost, usuarioPut, usuarioDelete }
+module.exports = { 
+    usuarioList, usuarioGet, usuarioPost, usuarioPut, usuarioDelete, usuarioLogin 
+}

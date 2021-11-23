@@ -9,14 +9,14 @@
     <div class="container">
         <div class="center">
             <h1>Login</h1>
-            <form method="post">
+            <form method="post" [formGroup]='loginForm' (ngSubmit)='logearUsuario()'>
                 <div class="txt_field">
-                    <input type="text" required>
+                    <input type="text" required formControlName='email'>
                     <span></span>
                 <label>Username</label>
                 </div>
                 <div class="txt_field">
-                    <input type="password" required>
+                    <input type="password" required formControlName='contrasena'>
                     <span></span>
                 <label>Password</label>
                 </div>

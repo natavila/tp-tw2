@@ -14,6 +14,10 @@ export class UsuarioService {
   }
 
   registrarUsuario(usuario: Usuario): Observable<any>{ //Devuelve un observable
-    return this.http.post(this.url, usuario);
+    return this.http.post(this.url + `/registro`, usuario);
+  }
+
+  logearUsuario(usuario: Usuario){
+    return this.http.post(this.url + `/login`, usuario);
   }
 }

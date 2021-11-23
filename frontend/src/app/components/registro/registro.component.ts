@@ -3,13 +3,13 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Usuario } from 'src/app/models/usuario';
-import { UsuarioService } from 'src/app/services/usuario.service';
+import { RegistroService } from 'src/app/services/registro.service';
 
 @Component({
   selector: 'app-registro',
   templateUrl: './registro.component.html',
   styleUrls: ['./registro.component.css'],
-  providers: [UsuarioService],
+  providers: [RegistroService]
 })
 export class RegistroComponent implements OnInit {
   registroForm: FormGroup;
@@ -18,7 +18,7 @@ export class RegistroComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private toastr: ToastrService,
-    private usuarioService: UsuarioService
+    private registroService: RegistroService
   ) {
     //Inyeccion de servicios
     this.registroForm = this.fb.group({
@@ -45,11 +45,14 @@ export class RegistroComponent implements OnInit {
       preferencias: this.registroForm.get('preferencias').value,
     };
 
-    this.usuarioService.registrarUsuario(USUARIO).subscribe(
-      (data) => {
+    this.registroService.registrarUsuario(USUARIO).subscribe(
+      res => {
+        console.log(res);
+        localStorage.setItem('token', res.token);
         this.toastr.success('El registro fue exitoso!', 'Usuario registrado');
         this.router.navigate(['/login']);
       },
+      
       (error) => {
         console.log('No se pudo registrar', error);
         this.registroForm.reset();
