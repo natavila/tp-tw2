@@ -15,5 +15,6 @@ export class VideoJuegoService {
 
   obtenerVideoJuegos(): Observable<any>{
     return this.http.get(this.url);
+    
   }
 }
