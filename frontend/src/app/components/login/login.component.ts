@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { LoginService } from 'src/app/services/login.service';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Usuario } from 'src/app/models/usuario';
-
+import { ToastrService } from 'ngx-toastr';
+import { LoginService } from 'src/app/services/login.service';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -18,11 +18,12 @@ export class LoginComponent implements OnInit {
     private loginService: LoginService,
     private fb: FormBuilder,
     private router: Router,
+    private toastr: ToastrService
   ) {
 
     this.loginForm = this.fb.group({
       email: ['', Validators.required, Validators.email],
-      contrasena: ['', Validators.required, Validators.minLength(8)],
+      contrasena: ['', Validators.required],
 
     });
   }
@@ -47,6 +48,10 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['/video-juego']);
       },
       err=> {
+        if(!this.loginForm.get('email').value || !this.loginForm.get('contrasena').value){
+        this.toastr.error('El email y la contrasena son requeridos para iniciar sesion', 'Campos sin completar');
+      }else
+        this.toastr.error('El correo o la contraseña son incorrectas', 'Correo o contraseña incorrecta');
         console.log(err)
       }
     )

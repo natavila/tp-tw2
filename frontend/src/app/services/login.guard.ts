@@ -16,7 +16,7 @@ export class LoginGuard implements CanActivate {
   }
 
   canActivate(): boolean {
-    if (this.loginService.loggedIn) {
+    if (this.loginService.loggedIn()) {
       return true;
     }
 
