@@ -3,19 +3,22 @@ import { HttpInterceptor } from '@angular/common/http';
 import { LoginService } from './login.service';
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root',
 })
+
 export class TokenInterceptorService implements HttpInterceptor {
+	
+	constructor(
+		private loginService: LoginService
+	) {}
 
-  constructor(private loginService: LoginService) { }
+	intercept(req, next) {
+		const tokenizenReq = req.clone({
+			setHeaders: {
+				Authorization: `Bearer ${this.loginService.getToken()}`,
+			}
+		});
 
-  intercept(req, next){
-    const tokenizenReq = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${this.loginService.getToken()}`
-      }
-    })
-    return next.handle(tokenizenReq);
-  }
-  
+		return next.handle(tokenizenReq);
+	}
 }

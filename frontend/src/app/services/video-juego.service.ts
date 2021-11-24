@@ -3,18 +3,18 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root',
 })
 
 export class VideoJuegoService {
 
-  url = 'http://localhost:3000/video-juego';
+	url = 'http://localhost:3000/video-juego/';
 
-  constructor(private http: HttpClient) {
-  }
+	constructor(
+		private http: HttpClient
+	) {}
 
-  obtenerVideoJuegos(): Observable<any>{
-    return this.http.get(this.url);
-    
-  }
+	obtenerVideoJuegos(): Observable<any> {
+		return this.http.get(this.url);
+	}
 }

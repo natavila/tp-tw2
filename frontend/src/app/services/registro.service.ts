@@ -4,17 +4,18 @@ import { Observable } from 'rxjs';
 import { Usuario } from '../models/usuario';
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root',
 })
+
 export class RegistroService {
-  url = 'http://localhost:3000/usuario';
 
-  constructor(private http: HttpClient) { 
-    this.http.get(this.url);
-  }
+	url = 'http://localhost:3000/usuario/';
 
-  registrarUsuario(usuario: Usuario): Observable<any>{ //Devuelve un observable
-    return this.http.post(this.url, usuario);
-  }
+	constructor(
+		private http: HttpClient
+	) {}
 
+	registrarUsuario(usuario: Usuario): Observable<any> {
+		return this.http.post(this.url, usuario);
+	}
 }

@@ -41,8 +41,7 @@ export class RegistroComponent implements OnInit {
       email: this.registroForm.get('email').value,
       contrasena: this.registroForm.get('contrasena').value,
       direccion: this.registroForm.get('direccion').value,
-      //fecha_nacimiento: this.registroForm.get('fecha_nacimiento')
-      preferencias: this.registroForm.get('preferencias').value,
+      preferencias: this.registroForm.get('preferencias').value
     };
 
     this.registroService.registrarUsuario(USUARIO).subscribe(
