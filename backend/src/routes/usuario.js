@@ -4,12 +4,15 @@ const { validarJwt } = require('../helpers/validar-jwt');
 
 const router = express.Router();
 
-router.get('/', usuarioList);
-router.get('/:id', usuarioGet);
+// No necesitan autenticacion
 router.post('/', usuarioPost);
 router.post('/login', usuarioLogin);
+
+// Necesitan autenticacion
+router.get('/', validarJwt, usuarioList);
+router.get('/:id', validarJwt, usuarioGet);
 router.put('/:id', validarJwt, usuarioPut);
-router.delete('/:id', usuarioDelete);
+router.delete('/:id', validarJwt, usuarioDelete);
 
 module.exports = router;
 

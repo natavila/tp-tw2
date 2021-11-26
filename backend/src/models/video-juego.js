@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-var VideoJuego = mongoose.model('videojuego', {
+const VideoJuego = mongoose.model('videojuego', {
     nombre: {
         type: String,
         required: [true, "El nombre del videojuego es obligatorio."]

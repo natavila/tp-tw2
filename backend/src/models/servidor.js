@@ -4,6 +4,7 @@ const { dbConexion } = require('../database/config');
 const usuarioRutas = require('../routes/usuario');
 const videoJuegoRutas = require('../routes/video-juego');
 const carritoRutas = require('../routes/carrito');
+const pedidoRutas = require('../routes/pedido');
 
 class Servidor {
 
@@ -28,6 +29,7 @@ class Servidor {
         this.app.use('/usuario', usuarioRutas);
         this.app.use('/video-juego', videoJuegoRutas);
         this.app.use('/carrito', carritoRutas);
+        this.app.use('/pedido', pedidoRutas);
     }
 
     listen() {
