@@ -1,6 +1,7 @@
 const { Usuario } = require('../models/usuario');
 const { Carrito } = require('../models/carrito');
 const { VideoJuego } = require('../models/video-juego');
+const { Pedido } = require('../models/pedido');
 
 /*
  * Controlador para listar un carrito por id del usuario
@@ -27,6 +28,7 @@ const carritoGet = async (req, res) => {
 /*
  * Controlador para crear un carrito
 */
+//  --------------->     NO SE VA A UTILIZAR ESTE CONTROLADOR    <---------------    //
 const carritoPost = async (req, res) => {
 
     const { userId } = req;
@@ -159,10 +161,42 @@ const eliminarVideoJuegoDelCarrito = async (req, res) => {
 };
 
 /*
+ * Controlador para confirmar los items del carrito y crear la ordem (se elimina el carrito y se plasman los juegos en la orden)
+*/
+const confirmarCarrito = async (req, res) => {
+
+    const { userId } = req;
+
+    if(!esObjectIdValido(userId))
+        return res.status(400).send({mensaje: `El identificador ${userId} del usuario es invalido`});
+
+    try {
+        const carrito = await Carrito.findOne({ userId: userId });
+
+        if(!carrito)
+            return res.status(404).send({ mensaje: 'No existe un carrito asociado al usuario ', userId });
+    
+        const { listaDeJuegos, ...restoDelCarrito } = carrito;
+    
+        if(!listaDeJuegos.length)
+            return res.status(400).send({ mensaje: 'No se puede confirmar el carrito para crear el pedido, debe de contener al menos un video juego' });
+    
+        await Carrito.findOneAndDelete({ userId: userId });
+
+        const pedido = new Pedido({ idUsuario: userId, listaDeJuegos })
+        const pedidoCreado = await pedido.save();
+
+        res.status(200).send({ id: pedidoCreado.id, mensaje: 'Se creo el pedido' });
+    } catch (error) {
+        res.status(500).send({ mensaje: error.message });
+    }
+}
+
+/*
  * Helpers de los controladores de carrito
 */
 const esObjectIdValido = id => {
     return id.match(/^[0-9a-fA-F]{24}$/);
 }
 
-module.exports = { carritoGet, carritoPost, agregarVideoJuegoAlCarrito, eliminarVideoJuegoDelCarrito };
+module.exports = { carritoGet, carritoPost, agregarVideoJuegoAlCarrito, eliminarVideoJuegoDelCarrito, confirmarCarrito };

@@ -27,6 +27,7 @@ const pedidoGet = async (req, res) => {
 /*
  * Controlador para crear un pedido
 */
+//  --------------->     NO SE VA A UTILIZAR ESTE CONTROLADOR    <---------------    //
 const pedidoPost = async (req, res) => {
 
     const { userId } = req;
