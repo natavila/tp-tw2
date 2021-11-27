@@ -7,10 +7,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 import { AppRoutingModule } from './app-routing.module';
+
 import { AppComponent } from './app.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegistroComponent } from './components/registro/registro.component';
 import { VideoJuegoComponent } from './components/video-juego/video-juego.component';
+import { VideoJuegoDetalleComponent } from './components/video-juego-detalle/video-juego-detalle.component';
+import { CarritoComponent } from './components/carrito/carrito.component';
+
 import { LoginGuard } from './services/login.guard';
 import { TokenInterceptorService } from './services/token-interceptor.service';
 
@@ -19,7 +23,9 @@ import { TokenInterceptorService } from './services/token-interceptor.service';
 		AppComponent,
 		LoginComponent,
 		RegistroComponent,
-		VideoJuegoComponent
+		VideoJuegoComponent,
+		VideoJuegoDetalleComponent,
+  		CarritoComponent
 	],
 	imports: [
 		BrowserModule,
@@ -43,3 +49,4 @@ import { TokenInterceptorService } from './services/token-interceptor.service';
 })
 
 export class AppModule {}
+

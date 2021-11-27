@@ -18,4 +18,5 @@ export class RegistroService {
 	registrarUsuario(usuario: Usuario): Observable<any> {
 		return this.http.post(this.url, usuario);
 	}
+
 }

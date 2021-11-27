@@ -15,7 +15,7 @@ export class LoginService {
 	constructor(
 		private http: HttpClient,
 		private router: Router
-	) {}
+	) { }
 
 	logearUsuario(usuario: Usuario): Observable<any> {
 		return this.http.post(`${this.url}login`, usuario);

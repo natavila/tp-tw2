@@ -3,7 +3,7 @@
 *{
     font-family: "Poppins", sans-serif;
   }
-/*
+
 
   :root {
     --color-dark: #15181f;
@@ -58,7 +58,7 @@ body {
 }
 
 .register-bg {
-    background-image: url('../../../images/zelda.jpg');
+    background-image: url('../../images/zelda.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     min-height: 100vh;
@@ -87,4 +87,3 @@ body {
         min-height: 50vh;
     }
 }
-*/

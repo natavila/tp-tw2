@@ -14,7 +14,13 @@ export class VideoJuegoService {
 		private http: HttpClient
 	) {}
 
-	obtenerVideoJuegos(): Observable<any> {
-		return this.http.get(this.url);
-	}
+  obtenerVideoJuegos(): Observable<any>{
+    return this.http.get(this.url);
+    
+  }
+
+  verVideoJuego(id: string): Observable<any>{
+    return this.http.get(`${this.url}${id}`);
+  }
+
 }

@@ -1,33 +1,42 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { VideoJuegoService } from 'src/app/services/video-juego.service';
+import { LoginService } from 'src/app/services/login.service';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-video-juego',
-  templateUrl: './video-juego.component.html',
-  styleUrls: ['./video-juego.component.css'],
-  providers: [VideoJuegoService],
+	selector: 'app-video-juego',
+	templateUrl: './video-juego.component.html',
+	styleUrls: ['./video-juego.component.css'],
+	providers: [VideoJuegoService]
 })
 
 export class VideoJuegoComponent implements OnInit {
 
-  videoJuegos = [];
+	videoJuegos = [];
 
+	constructor(
+		private videoJuegoService: VideoJuegoService,
+		private loginService: LoginService,
+		private router: Router,
+	) { }
 
-  constructor(private videoJuegoService: VideoJuegoService) {
-  }
+	ngOnInit(): void {
+		this.listarVideoJuegos();
+	}
 
-  ngOnInit(): void {
-    this.listarVideoJuegos();
-  }
+	listarVideoJuegos() {
+		this.videoJuegoService.obtenerVideoJuegos().subscribe(
+			(data) => {
+				this.videoJuegos = data;
+			},
+			(error) => {
+				console.log(error);
+			}
+		);
+	}
 
-  listarVideoJuegos() {
-    this.videoJuegoService.obtenerVideoJuegos().subscribe(
-      (data) => {
-        this.videoJuegos = data;
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-  }
+	logout() {
+		this.loginService.logout();
+		this.router.navigate(['/login']);
+	}
 }
