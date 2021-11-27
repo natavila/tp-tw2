@@ -107,6 +107,9 @@ const usuarioLogin = async (req, res) => {
     if(!usuario || !bcrypt.compareSync(contrasena, usuario.contrasena))
         return res.status(400).send({ mensaje: 'Email o contrasena incorrecta' });
 
+    if(usuario.estado === 'Pendiente')
+        return res.status(400).send({ mensaje: 'Confirme su correo electronico para poder ingresar' });
+
     const token = JWT.sign({ _id: usuario._id }, 'secretkey');
 
     res.status(200).send({ token });

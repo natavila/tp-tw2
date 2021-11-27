@@ -19,7 +19,13 @@ const carritoGet = async (req, res) => {
         if(!carrito)
             return res.status(404).send({ mensaje: 'No existe un carrito asociado al usuario ', userId });
 
-        res.status(200).send(carrito);
+        let precioTotal = 0;
+
+        carrito.listaDeJuegos.forEach(juego => {
+            precioTotal += juego.precio;
+        });
+
+        res.status(200).send({ ...carrito._doc, precioTotal });
     } catch (error) {
         res.status(500).send({ mensaje: error.message });
     }  
