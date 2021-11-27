@@ -14,7 +14,7 @@ const carritoGet = async (req, res) => {
         return res.status(400).send({mensaje: `El identificador ${userId} del usuario es invalido`});
 
     try {
-        const carrito = await Carrito.findOne({ userId: userId });
+        const carrito = await Carrito.findOne({ idUsuario: userId });
 
         if(!carrito)
             return res.status(404).send({ mensaje: 'No existe un carrito asociado al usuario ', userId });
