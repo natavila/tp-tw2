@@ -53,30 +53,36 @@
     </nav>
     <!-- Section-->
     <section class="py-5">
-        <div class="container px-4 px-lg-5 mt-5">
-            <table class="table table-dark table-borderless table-hover">
+        <div class="container px-4 px-lg-5 mt-5 text-start">
+            
+            <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th scope="col"></th>
-                        <th scope="col">Producto</th>
-                        <th scope="col">Cantidad</th>
-                        <th scope="col">Precio</th>
+                      <th scope="col"></th>
+                      <th scope="col">Producto</th>
+                      <th scope="col">Cantidad</th>
+                      <th scope="col">Precio</th>
                     </tr>
-                </thead>
-                <tbody>
-                    <div *ngFor="let juego of carrito.listaDeJuegos">
-                        <tr>
-                            <th scope="row">{{juego['nombre']}}</th>
-                            <th scope="row">{{juego['precio']}}</th>
-                        </tr>
-                        <tr>
-                            <th scope="row"></th>
-                            <td colspan="2"></td>
-                        </tr>
-                    </div>
-                    <p class="m-0 text-center text-black">El precio total es: {{carrito['precioTotal']}}</p>
-                </tbody>
-            </table>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let juego of carrito.listaDeJuegos">
+                      <th scope="row"><img src="{{juego['imagen']}}" alt="" style="width: 20%;"></th>
+                      <td>{{juego['nombre']}}</td>
+                      <td>1</td>
+                      <td>${{juego['precio']}}</td>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <td></td>
+                        <td></td>
+                        <td><strong>Total: ${{carrito['precioTotal']}}</strong></td>
+                      </tr>
+                  </tbody>
+              </table>
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                
+                <button class="btn btn-dark" type="button">Confirmar carrito</button>
+              </div>
         </div>
     </section>
     <!-- Footer-->
