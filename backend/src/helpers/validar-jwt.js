@@ -1,27 +1,35 @@
 const JWT = require('jsonwebtoken');
 const { Usuario } = require('../models/usuario');
 
-const validarJwt = async (req, res, next) => {
+const validarJwt = (req, res, next) => {
 
-    if(!req.headers.authorization || req.headers.authorization.split(' ')[1] === null)
-        return res.status(401).send({ mensaje: 'Solicitud denegada - Unauthorized' })
+    const mensaje = 'Solicitud denegada - Unauthorized';
+
+    if(!req.headers.authorization || !req.headers.authorization.split(' ')[1])
+        return res.status(401).send({ mensaje })
 
     const token = req.headers.authorization.split(' ')[1];
 
+    let payload;
+
     try {
-        const payload = JWT.verify(token, 'secretkey');
-
-        const usuario = await Usuario.findById(payload._id);
-        
-        if(!usuario)
-            return res.status(401).send({ mensaje: 'Solicitud denegada - Unauthorized' });
-        
-        req.userId = payload._id;
-
-        next();
+        payload = JWT.verify(token, 'secretkey');
     } catch (error) {
-        return res.status(400).send({ mensaje: 'Token invalido' })
+        return res.status(400).send({ mensaje })
     }
+
+    Usuario.findById(payload._id)
+        .then(usuario => {
+            if(!usuario)
+                return res.status(401).send({ mensaje });
+        
+            req.userId = payload._id;
+
+            next();
+        })
+        .catch(error => {
+            return res.status(400).send({ mensaje: 'Error', error })
+        })
 }
 
 module.exports = { validarJwt }

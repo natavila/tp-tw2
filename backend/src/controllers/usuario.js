@@ -6,164 +6,96 @@ const { transporter } = require('../nodemailer/config');
 /*
  * Controlador para listar todos los usuarios
 */
-const usuarioList = async (req, res) =>{
-
-    try {
-        const usuarios = await Usuario.find();
-        res.status(200).send(usuarios.map(ocultarPropiedades));
-    } catch (error) {
+const usuarioList = (req, res) =>{
+    Usuario.find()
+    .then(usuarios => {
+        return res.status(200).send(usuarios.map(ocultarPropiedades));
+    })
+    .catch(error => {
         res.status(500).send({ mensaje: 'Error al listar los usuarios', error });
-    }
+    });
 };
 
 /*
- * Controlador para listar un usuario por id
+ * Controlador para listar un usuario por su id
 */
-const usuarioGet = async (req, res) =>{
-
+const usuarioGet = (req, res) => {
     const { id } = req.params;
 
-    if(!esObjectIdValido(id)) {
-        res.status(400).send({mensaje: `El identificador ${id} es invalido`});
-        return;
-    }
+    if(!esObjectIdValido(id))
+        return res.status(400).send({mensaje: `El identificador ${id} es invalido`});
 
-    try {
-        const usuario = await Usuario.findById(id);
+    Usuario.findById(id)
+    .then(usuario => {
+        if(!usuario)
+            return res.status(404).send({mensaje: 'No existe el usuario ' + id});
 
-        if(!usuario) 
-            res.status(404).send({mensaje: 'No existe el usuario ' + id});
-        else
-            res.status(200).send(ocultarPropiedades(usuario));
-    } catch (error) { 
-        res.status(500).send({ mensaje: 'Error al buscar usuario', error });
-    }
+        return res.status(200).send(ocultarPropiedades(usuario));
+    })
+    .catch(error => {
+        return res.status(500).send({ mensaje: 'Error al buscar usuario', error });
+    })
 };
 
 /*
- * Controlador para crear un nuevo usuario
+ * Controlador para registrar un nuevo usuario
 */
-const usuarioPost = async (req, res) => {
+const usuarioPost = (req, res) => {
+    if(!poseeLasPropiedadesRequeridas(req.body))
+        return res.status(400).send({ mensaje: 'Las propiedades [ nombre - apellido - email - contrasena ] son requeridas' });
 
-    if(!poseeLasPropiedadesRequeridas(req.body)) {
-        res.status(400).send({ mensaje: 'Las propiedades [ nombre - apellido - email - contrasena ] son requeridas' });
-        return;
-    }
+    if(!esEmailValido(req.body.email))
+        return res.status(400).send({ mensaje: `El email ${req.body.email} es invalido` });
 
-    if(!esEmailValido(req.body.email)) {
-        res.status(400).send({ mensaje: `El email ${req.body.email} es invalido` });
-        return;
-    }
-
-    try {
-        const usuarioConEmailProporcionado = await Usuario.findOne({ email: req.body.email });
-
-        if(usuarioConEmailProporcionado){
-            res.status(400).send({ mensaje: 'El correo ingresado ya se encuentra registrado' });
-            return;        
+    Usuario.findOne({ email: req.body.email })
+    .then(usuarioExistente => {
+        if(usuarioExistente)
+            res.status(400).send({ mensaje: `El email ${req.body.email} se encuentra registrado` });
+        else{
+            let usuario = new Usuario(req.body);
+            bcrypt.hash(usuario.contrasena, 12)
+            .then(contrasenaEncriptada => {
+                usuario.contrasena = contrasenaEncriptada;
+                usuario.codigo = Math.round(Math.random()*999999);
+                return usuario.save();
+            })
+            .then(usuarioCreado => {
+                res.status(200).send({  mensaje: 'Usuario creado', id: usuarioCreado._id, token: JWT.sign({ _id: usuarioCreado._id }, 'secretkey') });
+                return transporter.sendMail(estructuraDelEmail(usuarioCreado));
+            })
+            .catch(error => {
+                res.status(500).send({ mensaje: error.message });
+            })
         }
-
-        const usuario = new Usuario(req.body);
-
-        const BCRYPT_SALT_ROUNDS = 12;
-        const codigo =  Math.round(Math.random()*999999);
-
-        const contrasenaEncriptada = await bcrypt.hash(req.body.contrasena, BCRYPT_SALT_ROUNDS)
-
-        usuario.contrasena = contrasenaEncriptada;
-        usuario.codigo = codigo;
-
-        const usuarioCreado = await usuario.save();
-
-        const token = JWT.sign({ _id: usuarioCreado._id }, 'secretkey');
-
-        res.status(200).send({ id: usuarioCreado.id, mensaje: 'Se creo el usuario', token });
-
-        await transporter.sendMail({
-            from: '"VideoJuegos Store" <avila.nataly12@gmail.com>',
-            to: usuario.email,
-            subject: "Codigo de verificacion✔ - VideoJuegos Store",
-            html: `<h1>Confirmacion de correo electronico</h1>
-            <h2>Hola ${usuario.nombre}</h2>
-            <p>Para validar tu cuenta, ingresa el siguiente codigo en la aplicacion: <strong>${codigo}</strong></p>`
-        });
-    } catch (error) {
+    })
+    .catch(error => {
         res.status(500).send({ mensaje: error.message });
-    }  
+    })
 };
 
 /*
- * Controlador para loguear un usuario en la aplicacion
+ * Controlador para loguear un usuario
 */
-const usuarioLogin = async (req, res) => {
-
+const usuarioLogin = (req, res) => {
     const { email, contrasena } = req.body;
 
     if(!email || !contrasena)
         return res.status(400).send({ mensaje: 'El email y la contrasena son requeridos para loguearse' })
 
-    const usuario = await Usuario.findOne({ email });
+    Usuario.findOne({ email })
+    .then(usuario => {
+        if(!usuario || !bcrypt.compareSync(contrasena, usuario.contrasena))
+            return res.status(400).send({ mensaje: 'Email o contrasena incorrecta' });
 
-    if(!usuario || !bcrypt.compareSync(contrasena, usuario.contrasena))
-        return res.status(400).send({ mensaje: 'Email o contrasena incorrecta' });
-
-    const token = JWT.sign({ _id: usuario._id }, 'secretkey');
-
-    res.status(200).send({ token });
+        res.status(200).send({ token: JWT.sign({ _id: usuario._id }, 'secretkey') });
+    })
+    .catch(error => {
+        res.status(500).send({ mensaje: error.message });
+    })
 };
 
 /*
- * Controlador para actualizar propiedades de un usuario
-*/
-const usuarioPut = async (req, res) =>{
-
-    const { id } = req.params;
-
-    if(!esObjectIdValido(id)) {
-        res.status(400).send({mensaje: `El identificador ${id} es invalido`});
-        return;
-    }
-
-    const { __id, ...restoDelUsuario } = req.body;
-
-    try {
-        const usuario = await Usuario.findByIdAndUpdate(id, restoDelUsuario);
-
-        if(!usuario) 
-            res.status(404).send({ mensaje: 'No existe el usuario ' + id }); 
-        else
-            res.status(200).send({ id, mensaje: 'Se actualizo el usuario' });
-    } catch (error) { 
-        res.status(500).send({ mensaje: 'No se pudo actualizar el usuario ' + id, error });
-    }
-};
-
-/*
- * Controlador para eliminar un usuario
-*/
-const usuarioDelete = async (req, res) => {
-
-    const { id } = req.params;
-
-    if(!esObjectIdValido(id)) {
-        res.status(400).send({mensaje: `El identificador ${id} es invalido`});
-        return;
-    }
-
-    try {
-        const usuarioEliminado = await Usuario.findByIdAndDelete(id);
-
-        if(!usuarioEliminado)
-            res.status(404).send({ mensaje: 'No existe el usuario ' + id });
-        else
-            res.status(200).send({ id, mensaje: 'Usuario eliminado' });
-    } catch (error) {
-        res.status(500).send({ mensaje: 'No se pudo eliminar al usuario ' + id, error });
-    }
-};
-
-/*
- * Helpers de los controladores de usuario
+ * Helpers
 */
 const ocultarPropiedades = usuario => {
     const { __v, contrasena, _id, ...restoDelUsuario } = usuario._doc;
@@ -181,13 +113,10 @@ const esEmailValido = email => {
 }
 
 const poseeLasPropiedadesRequeridas = propiedades => {
-
     const propiedadesRequeridas = ['nombre', 'apellido', 'email', 'contrasena'];
-
     let existenTodasLasPropiedadesRequeridas = true;
 
     propiedadesRequeridas.forEach(propiedad => {
-
         if(!propiedades[propiedad])
             existenTodasLasPropiedadesRequeridas = false;
     });
@@ -195,6 +124,15 @@ const poseeLasPropiedadesRequeridas = propiedades => {
     return existenTodasLasPropiedadesRequeridas;
 }
 
-module.exports = { 
-    usuarioList, usuarioGet, usuarioPost, usuarioLogin, usuarioPut, usuarioDelete 
+const estructuraDelEmail = (data) => {
+    return {
+        from: '"VideoJuegos Store" <avila.nataly12@gmail.com>',
+        to: data.email,
+        subject: "Codigo de verificacion✔ - VideoJuegos Store",
+        html: `<h1>Confirmacion de correo electronico</h1>
+        <h2>Hola ${data.nombre}</h2>
+        <p>Para validar tu cuenta, ingresa el siguiente codigo en la aplicacion: <strong>${data.codigo}</strong></p>`
+    }
 }
+
+module.exports = { usuarioList, usuarioGet, usuarioPost, usuarioLogin }
