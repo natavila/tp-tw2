@@ -9,10 +9,10 @@ const { transporter } = require('../nodemailer/config');
 const usuarioList = (req, res) =>{
     Usuario.find()
     .then(usuarios => {
-        return res.status(200).send(usuarios.map(ocultarPropiedades));
+        res.status(200).send(usuarios.map(ocultarPropiedades));
     })
     .catch(error => {
-        res.status(500).send({ mensaje: 'Error al listar los usuarios', error });
+        res.status(500).send({ mensaje: 'Error interno, intente de nuevo', error });
     });
 };
 
@@ -23,17 +23,17 @@ const usuarioGet = (req, res) => {
     const { id } = req.params;
 
     if(!esObjectIdValido(id))
-        return res.status(400).send({mensaje: `El identificador ${id} es invalido`});
+        return res.status(400).send({ mensaje: `El identificador ${id} es invalido` });
 
     Usuario.findById(id)
     .then(usuario => {
         if(!usuario)
-            return res.status(404).send({mensaje: 'No existe el usuario ' + id});
+            return res.status(404).send({ mensaje: `No existe el usuario ${id}` });
 
-        return res.status(200).send(ocultarPropiedades(usuario));
+        res.status(200).send(ocultarPropiedades(usuario));
     })
     .catch(error => {
-        return res.status(500).send({ mensaje: 'Error al buscar usuario', error });
+        res.status(500).send({ mensaje: 'Error interno, intente de nuevo', error });
     })
 };
 
@@ -60,16 +60,16 @@ const usuarioPost = (req, res) => {
                 return usuario.save();
             })
             .then(usuarioCreado => {
-                res.status(200).send({  mensaje: 'Usuario creado', id: usuarioCreado._id, token: JWT.sign({ _id: usuarioCreado._id }, 'secretkey') });
+                res.status(200).send({ mensaje: 'Usuario creado', id: usuarioCreado._id, token: JWT.sign({ _id: usuarioCreado._id }, 'secretkey') });
                 return transporter.sendMail(estructuraDelEmail(usuarioCreado));
             })
             .catch(error => {
-                res.status(500).send({ mensaje: error.message });
+                res.status(500).send({ mensaje: 'Error interno, intente de nuevo', error });
             })
         }
     })
     .catch(error => {
-        res.status(500).send({ mensaje: error.message });
+        res.status(500).send({ mensaje: 'Error interno, intente de nuevo', error });
     })
 };
 
@@ -90,7 +90,7 @@ const usuarioLogin = (req, res) => {
         res.status(200).send({ token: JWT.sign({ _id: usuario._id }, 'secretkey') });
     })
     .catch(error => {
-        res.status(500).send({ mensaje: error.message });
+        res.status(500).send({ mensaje: 'Error interno, intente de nuevo', error });
     })
 };
 
