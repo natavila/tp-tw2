@@ -5,15 +5,12 @@ const mail = { user: 'avila.nataly12@gmail.com', pass: 'gsbeiyhltotqilwj' };
 const transporter = nodemailer.createTransport({
 	host: 'smtp.gmail.com',
 	port: 465,
-	secure: true, // true for 465, false for other ports
-	auth: {
-   		user: mail.user, // generated gmail user
-    	pass: mail.pass, // generated gmail password
-	}
+	secure: true,
+	auth: { user: mail.user, pass: mail.pass }
 });
 
 transporter.verify().then(() => {
-	console.log('Listo para enviar emails');
+	console.log('Nodemailer listo para enviar emails');
 });
 
 module.exports = { transporter }
