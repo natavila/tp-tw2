@@ -2,6 +2,7 @@ const { Usuario } = require('../models/usuario');
 const { Carrito } = require('../models/carrito');
 const { VideoJuego } = require('../models/video-juego');
 const { Pedido } = require('../models/pedido');
+const e = require('express');
 
 /*
  * Controlador para listar un carrito a travez del id del usuario
@@ -159,33 +160,39 @@ const eliminarVideoJuegoDelCarrito = (req, res) => {
 /*
  * Controlador para confirmar los items del carrito y crear la ordem (se elimina el carrito y se plasman los juegos en la orden)
 */
-const confirmarCarrito = async (req, res) => {
-
+const confirmarCarrito = (req, res) => {
     const { userId } = req;
 
     if(!esObjectIdValido(userId))
         return res.status(400).send({mensaje: `El identificador ${userId} del usuario es invalido`});
 
-    try {
-        const carrito = await Carrito.findOne({ userId: userId });
-
+    Carrito.findOne({ userId: userId })
+    .then(carrito => {
         if(!carrito)
-            return res.status(404).send({ mensaje: 'No existe un carrito asociado al usuario ', userId });
-    
-        const { listaDeJuegos, ...restoDelCarrito } = carrito;
-    
-        if(!listaDeJuegos.length)
-            return res.status(400).send({ mensaje: 'No se puede confirmar el carrito para crear el pedido, debe de contener al menos un video juego' });
-    
-        await Carrito.findOneAndDelete({ userId: userId });
+            return res.status(404).send({ mensaje: `No existe un carrito asociado al usuario ${userId}` });
+        else{
+            const { listaDeJuegos, ...restoDelCarrito } = carrito;
 
-        const pedido = new Pedido({ idUsuario: userId, listaDeJuegos })
-        const pedidoCreado = await pedido.save();
-
-        res.status(200).send({ id: pedidoCreado.id, mensaje: 'Se creo el pedido' });
-    } catch (error) {
-        res.status(500).send({ mensaje: error.message });
-    }
+            if(!listaDeJuegos?.length)
+                return res.status(400).send({ mensaje: 'Para confirmar el carrito y crear el pedido, el mismo debe contener al menos un video juego' });
+            else{
+                Carrito.findOneAndDelete({ userId: userId })
+                .then(() => {
+                    const pedido = new Pedido({ idUsuario: userId, listaDeJuegos });
+                    return pedido.save();
+                })
+                .then(pedido => {
+                    res.status(200).send({ mensaje: `Se creo el pedido del usuario ${userId}` });
+                })
+                .catch(error => {
+                    res.status(500).send({ mensaje: 'Error interno, intente de nuevo', error });
+                })
+            }
+        }
+    })
+    .catch(error => {
+        res.status(500).send({ mensaje: 'Error interno, intente de nuevo', error });
+    })
 }
 
 /*
