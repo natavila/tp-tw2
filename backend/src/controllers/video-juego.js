@@ -3,57 +3,53 @@ const { VideoJuego } = require('../models/video-juego');
 /*
  * Controlador para listar todos los videojuegos
 */
-const videoJuegoList = async (req, res) => {
-
-    try {
-        const videojuegos = await VideoJuego.find();
-        res.status(200).send(videojuegos);
-    } catch (error) {
-        res.status(500).send({ mensaje: "Error al listar videojuegos", error });
-    }
+const videoJuegoList = (req, res) => {
+    VideoJuego.find()
+    .then(videoJuegos => {
+        res.status(200).send(videoJuegos);
+    })
+    .catch(error => {
+        res.status(500).send({ mensaje: 'Error interno, intente de nuevo', error });
+    });
 };
 
 /*
  * Controlador para listar un videojuego por id
 */
-const videoJuegoGet = async (req, res) => {
-
+const videoJuegoGet = (req, res) => {
     const { id } = req.params;
 
-    if(!esObjectIdValido(id)) {
-        res.status(400).send({mensaje: `El identificador ${id} es invalido`});
-        return;
-    }
+    if(!esObjectIdValido(id))
+        return res.status(400).send({ mensaje: `El identificador ${id} es invalido` });
 
-    try {
-        const videojuego = await VideoJuego.findById(id);
+    VideoJuego.findById(id)
+    .then(videoJuego => {
+        if(!videoJuego)
+            return res.status(404).send({ mensaje: `No existe el videoJuego ${id}` });
 
-        if(!videojuego)
-            res.status(404).send({ mensaje: "No existe el videojuego " + id });
-        else
-            res.status(200).send(videojuego);
-    } catch (error) {
-        res.status(500).send({ mensaje: "Error al buscar videojuego", error });
-    }
+        res.status(200).send(videoJuego);
+    })
+    .catch(error => {
+        res.status(500).send({ mensaje: 'Error interno, intente de nuevo', error });
+    })
 };
 
 /*
  * Controlador para listar los videojuegos de una categoria
 */
-const videoJuegoPorCategoriaList = async (req, res) => {
-
+const videoJuegoPorCategoriaList = (req, res) => {
     const { categoria } = req.params;
 
-    try {
-        const videojuegos = await VideoJuego.find({ categoria: categoria });
+    VideoJuego.find({ categoria })
+    .then(videoJuegos => {
+        if(!videoJuegos?.length)
+            return res.status(404).send({ mensaje: `No existen juegos con la categoria ${categoria}` });
 
-        if(videojuegos.length == 0)
-            res.status(404).send({ mensaje: "No hay juegos con la categoria " + categoria });
-        else
-            res.status(200).send(videojuegos);
-    } catch (error) {
-        res.status(500).send({ mensaje: "Error al buscar juegos por categoria ", error });
-    }
+        res.status(200).send(videojuegos);
+    })
+    .catch(error => {
+        res.status(500).send({ mensaje: 'Error interno, intente de nuevo', error });
+    })
 };
 
 /*
