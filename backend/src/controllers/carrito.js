@@ -38,13 +38,13 @@ const agregarVideoJuegoAlCarrito = (req, res) => {
     const { idVideoJuego } = req.body;
 
     if(!esObjectIdValido(userId))
-        return res.status(400).send({mensaje: `El identificador ${userId} del usuario es invalido`});
+        return res.status(400).send({ mensaje: `El identificador ${userId} del usuario es invalido` });
 
     if(!idVideoJuego)
-        return res.status(400).send({ mensaje: `Debe enviar el video juego para agregar al carrito`});
+        return res.status(400).send({ mensaje: `Debe enviar el video juego para agregar al carrito` });
 
     if(!esObjectIdValido(idVideoJuego))
-        return res.status(400).send({mensaje: `El identificador ${idVideoJuego} del video juego es invalido`});
+        return res.status(400).send({ mensaje: `El identificador ${idVideoJuego} del video juego es invalido` });
 
     Usuario.findById(userId)
     .then(usuario => {
@@ -60,7 +60,7 @@ const agregarVideoJuegoAlCarrito = (req, res) => {
                     .then(carrito => {
                         if(!carrito) {
                             const carritoCreado = new Carrito({ idUsuario: userId, listaDeJuegos: [videoJuego] });
-                            res.status(200).send({ mensaje: `Se agrego el video juego ${idVideoJuego} al carrito`});
+                            res.status(200).send({ mensaje: `Se agrego el video juego ${idVideoJuego} al carrito` });
                             return carritoCreado.save();
                         }else{
                             let existeElJuegoEnElCarrito = false;
@@ -71,10 +71,10 @@ const agregarVideoJuegoAlCarrito = (req, res) => {
                             });
 
                             if(existeElJuegoEnElCarrito)
-                                return res.status(400).send({ mensaje: `Ya existe el video juego ${idVideoJuego} en el carrito`})
+                                return res.status(400).send({ mensaje: `Ya existe el video juego ${idVideoJuego} en el carrito` })
                             else{
                                 carrito.listaDeJuegos.push(videoJuego);
-                                res.status(200).send({ mensaje: `Se agrego el video juego ${idVideoJuego} al carrito`})
+                                res.status(200).send({ mensaje: `Se agrego el video juego ${idVideoJuego} al carrito` })
                                 return carrito.save();
                             }
                         }
@@ -97,48 +97,63 @@ const agregarVideoJuegoAlCarrito = (req, res) => {
 /*
  * Controlador para eliminar un video juego del carrito
 */
-const eliminarVideoJuegoDelCarrito = async (req, res) => {
-
+const eliminarVideoJuegoDelCarrito = (req, res) => {
     const { userId } = req;
     const { idVideoJuego } = req.body;
 
     if(!esObjectIdValido(userId))
-        return res.status(400).send({mensaje: `El identificador ${userId} del usuario es invalido`});
+        return res.status(400).send({ mensaje: `El identificador ${userId} del usuario es invalido` });
+
+    if(!idVideoJuego)
+        return res.status(400).send({ mensaje: `Debe enviar el video juego a eliminar del carrito` });
 
     if(!esObjectIdValido(idVideoJuego))
-        return res.status(400).send({mensaje: `El identificador ${idVideoJuego} del video juego es invalido`});
+        return res.status(400).send({ mensaje: `El identificador ${idVideoJuego} del video juego es invalido` });
 
-    try {
-        const usuario = await Usuario.findById(userId);
+    Usuario.findById(userId)
+    .then(usuario => {
         if(!usuario)
             return res.status(404).send({ mensaje: `No existe el usuario ${userId}` });
+        else{
+            VideoJuego.findById(idVideoJuego)
+            .then(videoJuego => {
+                if(!videoJuego)
+                    return res.status(404).send({ mensaje: `No existe el video juego ${idVideoJuego}` })
+                else{
+                    Carrito.findOne({ idUsuario: userId })
+                    .then(carrito => {
+                        if(!carrito)
+                            return res.status(404).send({ mensaje: `El usuario ${userId} no posee un carrito activo` })
+                        else{
+                            const existeElJuegoEnElCarrito = carrito.listaDeJuegos.find(juego => juego._id.toString() === idVideoJuego);
 
-        const videoJuego = await VideoJuego.findById(idVideoJuego);
-        if(!videoJuego)
-            return res.status(404).send({ mensaje: `No existe el video juego ${idVideoJuego}` })
+                            if(!existeElJuegoEnElCarrito)
+                                return res.status(400).send({ mensaje: `No existe el juego ${idVideoJuego} dentro del carrito` })
 
-        const carrito = await Carrito.findOne({ idUsuario: userId });
-        if(!carrito)
-            return res.status(404).send({ mensaje: `El usuario ${userId} no posee un carrito activo` })
+                            const nuevaListaDeJuegos = carrito.listaDeJuegos.filter(juego => {
+                                return juego._id.toString() !== idVideoJuego;
+                            })
 
-        const existeElJuegoEnElCarrito = carrito.listaDeJuegos.find(juego => juego._id.toString() === idVideoJuego);
+                            carrito.listaDeJuegos = nuevaListaDeJuegos;
+                            carrito.markModified('listaDeJuegos');
 
-        if(!existeElJuegoEnElCarrito)
-            return res.status(400).send({ mensaje: `No existe el juego ${idVideoJuego} dentro en el carrito`})
-
-        const nuevaListaDeJuegos = carrito.listaDeJuegos.filter(juego => {
-            return juego._id.toString() !== idVideoJuego;
-        })
-
-        carrito.listaDeJuegos = nuevaListaDeJuegos;
-        carrito.markModified('listaDeJuegos');
-
-        await carrito.save();
-
-        return res.status(200).send({ mensaje: `Se elimino el video juego ${idVideoJuego} del carrito`});
-    } catch (error) {
-        res.status(500).send({ mensaje: error.message });
-    }  
+                            res.status(200).send({ mensaje: `Se elimino el video juego ${idVideoJuego} del carrito` });
+                            return carrito.save();
+                        }
+                    })
+                    .catch(error => {
+                        res.status(500).send({ mensaje: 'Error interno, intente de nuevo', error });
+                    })
+                }
+            })
+            .catch(error => {
+                res.status(500).send({ mensaje: 'Error interno, intente de nuevo', error });
+            })
+        }
+    })
+    .catch(error => {
+        res.status(500).send({ mensaje: 'Error interno, intente de nuevo', error });
+    })
 };
 
 /*
