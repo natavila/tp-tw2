@@ -3,23 +3,22 @@ const { Pedido } = require('../models/pedido');
 /*
  * Controlador para listar un pedido por id del usuario
 */
-const pedidoGet = async (req, res) => {
-
+const pedidoGet = (req, res) => {
     const { userId } = req;
 
     if(!esObjectIdValido(userId))
-        return res.status(400).send({mensaje: `El identificador ${userId} del usuario es invalido`});
+        return res.status(400).send({ mensaje: `El identificador ${userId} del usuario es invalido` });
 
-    try {
-        const pedido = await Pedido.findOne({ idUsuario: userId });
-
+    Pedido.findOne({ idUsuario: userId })
+    .then(pedido => {
         if(!pedido)
-            return res.status(404).send({ mensaje: 'No existe un pedido asociado al usuario ', userId });
+            return res.status(404).send({ mensaje: `No existe un pedido asociado al usuario ${userId}` });
 
         res.status(200).send(pedido);
-    } catch (error) {
-        res.status(500).send({ mensaje: error.message });
-    }  
+    })
+    .catch(error => {
+        res.status(500).send({ mensaje: 'Error interno, intente de nuevo', error });
+    })
 };
 
 /*
