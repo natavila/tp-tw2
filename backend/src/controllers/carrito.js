@@ -4,20 +4,18 @@ const { VideoJuego } = require('../models/video-juego');
 const { Pedido } = require('../models/pedido');
 
 /*
- * Controlador para listar un carrito por id del usuario
+ * Controlador para listar un carrito a travez del id del usuario
 */
-const carritoGet = async (req, res) => {
-
+const carritoGet = (req, res) => {
     const { userId } = req;
 
     if(!esObjectIdValido(userId))
         return res.status(400).send({mensaje: `El identificador ${userId} del usuario es invalido`});
 
-    try {
-        const carrito = await Carrito.findOne({ idUsuario: userId });
-
+    Carrito.findOne({ idUsuario: userId })
+    .then(carrito => {
         if(!carrito)
-            return res.status(404).send({ mensaje: 'No existe un carrito asociado al usuario ', userId });
+            return res.status(404).send({ mensaje: `No existe un carrito asociado al usuario ${userId}` });
 
         let precioTotal = 0;
 
@@ -26,101 +24,78 @@ const carritoGet = async (req, res) => {
         });
 
         res.status(200).send({ ...carrito._doc, precioTotal });
-    } catch (error) {
-        res.status(500).send({ mensaje: error.message });
-    }  
-};
-
-/*
- * Controlador para crear un carrito
-*/
-//  --------------->     NO SE VA A UTILIZAR ESTE CONTROLADOR    <---------------    //
-const carritoPost = async (req, res) => {
-
-    const { userId } = req;
-    const { listaDeJuegos } = req.body;
-
-    if(!esObjectIdValido(userId))
-        return res.status(400).send({mensaje: `El identificador ${userId} del usuario es invalido`});
-
-    try {
-        const usuario = await Usuario.findById(userId);
-
-        if(!usuario)
-            return res.status(404).send({ mensaje: 'No existe el usuario que se trato asignar al carrito' });
-
-        const existeCarrito = await Carrito.findOne({ userId: userId });
-
-        if(existeCarrito)
-            return res.status(400).send({ mensaje: `El usuario ${userId} tiene un carrito activo`});
-    
-        const videojuegosEncontrados = await VideoJuego.find({ _id: listaDeJuegos });
-
-        if(videojuegosEncontrados.length < listaDeJuegos.length)
-            return res.status(404).send({ mensaje: 'Uno o mas juegos que se intentaron sumar al carrito no existen' });
-
-        const carrito = new Carrito({ idUsuario: userId, listaDeJuegos: videojuegosEncontrados });
-        const carritoCreado = await carrito.save();
-
-        res.status(200).send({ id: carritoCreado.id, mensaje: 'Se creo el carrito' });
-    } catch (error) {
-        res.status(500).send({ mensaje: error.message });
-    }  
+    })
+    .catch(error => {
+        res.status(500).send({ mensaje: 'Error interno, intente de nuevo', error });
+    })
 };
 
 /*
  * Controlador para agregar un video juego al carrito
 */
-const agregarVideoJuegoAlCarrito = async (req, res) => {
-
+const agregarVideoJuegoAlCarrito = (req, res) => {
     const { userId } = req;
     const { idVideoJuego } = req.body;
 
     if(!esObjectIdValido(userId))
         return res.status(400).send({mensaje: `El identificador ${userId} del usuario es invalido`});
 
+    if(!idVideoJuego)
+        return res.status(400).send({ mensaje: `Debe enviar el video juego para agregar al carrito`});
+
     if(!esObjectIdValido(idVideoJuego))
         return res.status(400).send({mensaje: `El identificador ${idVideoJuego} del video juego es invalido`});
 
-    try {
-        const usuario = await Usuario.findById(userId);
+    Usuario.findById(userId)
+    .then(usuario => {
         if(!usuario)
             return res.status(404).send({ mensaje: `No existe el usuario ${userId}` });
+        else{
+            VideoJuego.findById(idVideoJuego)
+            .then(videoJuego => {
+                if(!videoJuego)
+                    return res.status(404).send({ mensaje: `No existe el video juego ${idVideoJuego}` })
+                else{
+                    Carrito.findOne({ idUsuario: userId })
+                    .then(carrito => {
+                        if(!carrito) {
+                            const carritoCreado = new Carrito({ idUsuario: userId, listaDeJuegos: [videoJuego] });
+                            res.status(200).send({ mensaje: `Se agrego el video juego ${idVideoJuego} al carrito`});
+                            return carritoCreado.save();
+                        }else{
+                            let existeElJuegoEnElCarrito = false;
 
-        const videoJuego = await VideoJuego.findById(idVideoJuego);
-        if(!videoJuego)
-            return res.status(404).send({ mensaje: `No existe el video juego ${idVideoJuego}` })
+                            carrito.listaDeJuegos.forEach(juego => {
+                                if(juego._id.toString() === idVideoJuego)
+                                    existeElJuegoEnElCarrito = true;
+                            });
 
-        const carritoExistente = await Carrito.findOne({ idUsuario: userId });
-
-        if(!carritoExistente) {
-
-            const carritoCreado = new Carrito({ idUsuario: userId, listaDeJuegos: [videoJuego] });
-            await carritoCreado.save();
-        }else {
-
-            let existeElJuegoEnElCarrito = false;
-
-            carritoExistente.listaDeJuegos.forEach(juego => {
-                if(juego._id.toString() === idVideoJuego)
-                    existeElJuegoEnElCarrito = true;
-            });
-
-            if(existeElJuegoEnElCarrito)
-                return res.status(400).send({ mensaje: `Ya existe el video juego ${idVideoJuego} en el carrito`})
-
-            carritoExistente.listaDeJuegos.push(videoJuego);
-            await carritoExistente.save();
+                            if(existeElJuegoEnElCarrito)
+                                return res.status(400).send({ mensaje: `Ya existe el video juego ${idVideoJuego} en el carrito`})
+                            else{
+                                carrito.listaDeJuegos.push(videoJuego);
+                                res.status(200).send({ mensaje: `Se agrego el video juego ${idVideoJuego} al carrito`})
+                                return carrito.save();
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        res.status(500).send({ mensaje: 'Error interno, intente de nuevo', error });
+                    })
+                }
+            })
+            .catch(error => {
+                res.status(500).send({ mensaje: 'Error interno, intente de nuevo', error });
+            })
         }
-
-        return res.status(200).send({ mensaje: `Se agrego el video juego ${idVideoJuego} al carrito`})
-    } catch (error) {
-        res.status(500).send({ mensaje: error.message });
-    }  
+    })
+    .catch(error => {
+        res.status(500).send({ mensaje: 'Error interno, intente de nuevo', error });
+    })
 };
 
 /*
- * Controlador para eliminar un video juego al carrito
+ * Controlador para eliminar un video juego del carrito
 */
 const eliminarVideoJuegoDelCarrito = async (req, res) => {
 
@@ -205,4 +180,4 @@ const esObjectIdValido = id => {
     return id.match(/^[0-9a-fA-F]{24}$/);
 }
 
-module.exports = { carritoGet, carritoPost, agregarVideoJuegoAlCarrito, eliminarVideoJuegoDelCarrito, confirmarCarrito };
+module.exports = { carritoGet, agregarVideoJuegoAlCarrito, eliminarVideoJuegoDelCarrito, confirmarCarrito };
