@@ -35,24 +35,6 @@ const videoJuegoGet = (req, res) => {
 };
 
 /*
- * Controlador para listar los videojuegos de una categoria
-*/
-const videoJuegoPorCategoriaList = (req, res) => {
-    const { categoria } = req.params;
-
-    VideoJuego.find({ categoria })
-    .then(videoJuegos => {
-        if(!videoJuegos?.length)
-            return res.status(404).send({ mensaje: `No existen juegos con la categoria ${categoria}` });
-
-        res.status(200).send(videojuegos);
-    })
-    .catch(error => {
-        res.status(500).send({ mensaje: 'Error interno, intente de nuevo', error });
-    })
-};
-
-/*
  * Helpers de los controladores de videojuego
 */
 const esObjectIdValido = id => {
