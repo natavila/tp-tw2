@@ -35,7 +35,7 @@ const videoJuegoGet = (req, res) => {
 };
 
 /*
- * Helpers de los controladores de videojuego
+ * Helpers
 */
 const esObjectIdValido = id => {
     return id.match(/^[0-9a-fA-F]{24}$/);
