@@ -1,6 +1,4 @@
-const { Usuario } = require('../models/usuario');
 const { Pedido } = require('../models/pedido');
-const { VideoJuego } = require('../models/video-juego');
 
 /*
  * Controlador para listar un pedido por id del usuario
@@ -31,4 +29,4 @@ const esObjectIdValido = id => {
     return id.match(/^[0-9a-fA-F]{24}$/);
 }
 
-module.exports = { pedidoGet, pedidoPost };
+module.exports = { pedidoGet };
