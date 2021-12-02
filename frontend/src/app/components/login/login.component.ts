@@ -48,7 +48,7 @@ export class LoginComponent implements OnInit {
 			err => {
 				if (err.noVerificado) {
 					this.toastr.error('Debe verificar la cuenta para poder loguearse', 'Campos sin completar');
-				}else if (!this.loginForm.get('email').value || !this.loginForm.get('contrasena').value) {
+				} else if (!this.loginForm.get('email').value || !this.loginForm.get('contrasena').value) {
 					this.toastr.error('El email y la contrasena son requeridos para iniciar sesion', 'Campos sin completar');
 				} else
 					this.toastr.error('El correo o la contraseña son incorrectas', 'Correo o contraseña incorrecta');

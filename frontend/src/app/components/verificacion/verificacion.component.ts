@@ -34,7 +34,7 @@ export class VerificacionComponent implements OnInit {
 			error => {
 				console.log(error);
 				this.route.navigate(['/login']);
-				this.toastr.success("Error al verificar cuenta");
+				this.toastr.error("Error al verificar cuenta", "Verificacion fallida");
 			}
 		)
 

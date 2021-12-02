@@ -49,7 +49,7 @@ const usuarioPost = (req, res) => {
 
     Usuario.findOne({ email: req.body.email })
     .then(usuarioExistente => {
-        if(usuarioExistente)
+        if(usuarioExistente && usuarioExistente.estado === 'Activo')
             res.status(400).send({ mensaje: `El email ${req.body.email} se encuentra registrado` });
         else{
             let usuario = new Usuario(req.body);
