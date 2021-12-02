@@ -60,7 +60,7 @@ const usuarioPost = (req, res) => {
                 return usuario.save();
             })
             .then(usuarioCreado => {
-                res.status(200).send({ mensaje: 'Usuario creado', id: usuarioCreado._id, token: JWT.sign({ _id: usuarioCreado._id }, 'secretkey') });
+                res.status(200).send({ mensaje: 'Usuario creado', id: usuarioCreado._id });
                 return transporter.sendMail(estructuraDelEmail(usuarioCreado));
             })
             .catch(error => {
@@ -87,7 +87,7 @@ const usuarioLogin = (req, res) => {
         if(!usuario || !bcrypt.compareSync(contrasena, usuario.contrasena))
             return res.status(400).send({ mensaje: 'Email o contrasena incorrecta' });
 
-        res.status(200).send({ token: JWT.sign({ _id: usuario._id }, 'secretkey') });
+        res.status(200).send({ token: JWT.sign({ _id: usuario._id }, 'secretkey', { expiresIn: '24h' }) });
     })
     .catch(error => {
         res.status(500).send({ mensaje: 'Error interno, intente de nuevo', error });
