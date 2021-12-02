@@ -80,15 +80,15 @@ const usuarioPost = (req, res) => {
 const usuarioLogin = (req, res) => {
     const { email, contrasena } = req.body;
 
-    if(!email || !contrasena)
+    if(!email || !contrasena){
         return res.status(400).send({ mensaje: 'El email y la contrasena son requeridos para loguearse' })
-
+    }
     Usuario.findOne({ email })
     .then(usuario => {
         if(!usuario || !bcrypt.compareSync(contrasena, usuario.contrasena))
             return res.status(400).send({ mensaje: 'Email o contrasena incorrecta' });
 
-        if(usuario.status !== 'Activo')
+        if(usuario.estado !== 'Activo')
             return res.status(400).send({ mensaje: 'Debe verificar la cuenta para poder loguearse' });
 
         res.status(200).send({ token: JWT.sign({ _id: usuario._id }, 'secretkey', { expiresIn: '24h' }) });

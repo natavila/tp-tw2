@@ -9,12 +9,13 @@ import { VideoJuegoDetalleComponent } from './components/video-juego-detalle/vid
 import { LoginGuard } from './services/login.guard';
 import { CarritoComponent } from './components/carrito/carrito.component';
 import { PedidoComponent } from './components/pedido/pedido.component';
+import { VerificacionComponent } from './components/verificacion/verificacion.component';
 
 const routes: Routes = [
 	{ path: '', component: LoginComponent },
 	{ path: 'login', component: LoginComponent },
 	{ path: 'registro', component: RegistroComponent },
-	{ path: 'verificacion/:token', component: RegistroComponent },
+	{ path: 'verificacion/:token', component: VerificacionComponent },
 	{ path: 'video-juego', component: VideoJuegoComponent },
 	{ path: 'video-juego/:id', component: VideoJuegoDetalleComponent, canActivate: [LoginGuard] },
 	{ path: 'carrito', component: CarritoComponent, canActivate: [LoginGuard] },
