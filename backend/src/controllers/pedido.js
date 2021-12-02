@@ -9,7 +9,7 @@ const pedidoGet = (req, res) => {
     if(!esObjectIdValido(userId))
         return res.status(400).send({ mensaje: `El identificador ${userId} del usuario es invalido` });
 
-    Pedido.findOne({ idUsuario: userId }).sort({$natural:-1}).limit(1)
+    Pedido.findOne({ idUsuario: userId })
     .then(pedido => {
         if(!pedido)
             return res.status(404).send({ mensaje: `No existe un pedido asociado al usuario ${userId}` });
