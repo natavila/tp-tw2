@@ -14,7 +14,13 @@ const pedidoGet = (req, res) => {
         if(!pedido)
             return res.status(404).send({ mensaje: `No existe un pedido asociado al usuario ${userId}` });
 
-        res.status(200).send(pedido);
+        let precioTotal = 0;
+
+        pedido.listaDeJuegos.forEach(juego => {
+            precioTotal += juego.precio;
+        });
+
+        res.status(200).send({ ...pedido._doc, precioTotal });
     })
     .catch(error => {
         res.status(500).send({ mensaje: 'Error interno, intente de nuevo', error });
