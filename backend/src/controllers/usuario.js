@@ -88,6 +88,9 @@ const usuarioLogin = (req, res) => {
         if(!usuario || !bcrypt.compareSync(contrasena, usuario.contrasena))
             return res.status(400).send({ mensaje: 'Email o contrasena incorrecta' });
 
+        if(usuario.status !== 'Activo')
+            return res.status(400).send({ mensaje: 'Debe verificar la cuenta para poder loguearse' });
+
         res.status(200).send({ token: JWT.sign({ _id: usuario._id }, 'secretkey', { expiresIn: '24h' }) });
     })
     .catch(error => {
