@@ -4,6 +4,7 @@ import { CarritoService } from 'src/app/services/carrito.service';
 import { Carrito } from 'src/app/models/carrito';
 import { VideoJuego } from 'src/app/models/video-juego';
 import { Router, ActivatedRoute } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
 	selector: 'app-video-juego-detalle',
@@ -20,7 +21,8 @@ export class VideoJuegoDetalleComponent implements OnInit {
 	constructor(private videoJuegoService: VideoJuegoService,
 		private carritoService: CarritoService,
 		private _route: ActivatedRoute,
-		private router: Router,) {
+		private router: Router,
+		private toastr: ToastrService) {
 
 	}
 
@@ -47,7 +49,7 @@ export class VideoJuegoDetalleComponent implements OnInit {
 		this.carritoService.agregarAlCarrito(this.id).subscribe(
 			data => {
 				this.carrito = data;
-				alert("Se agregro el juego al carrito");
+				this.toastr.success(this.videoJuego.nombre + " ha sido añadido al carrito.");
 				this.router.navigate(['/video-juego']);
 			},
 			error => {
@@ -57,4 +59,5 @@ export class VideoJuegoDetalleComponent implements OnInit {
 			}
 		)
 	}
+
 }

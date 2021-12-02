@@ -1,26 +1,31 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute} from '@angular/router';
+import { Router } from '@angular/router';
 import { Carrito } from 'src/app/models/carrito';
+import { Pedido } from 'src/app/models/pedido';
+import { ToastrService } from 'ngx-toastr';
 import { CarritoService } from 'src/app/services/carrito.service';
+import { PedidoService } from 'src/app/services/pedido.service';
 
 @Component({
 	selector: 'app-carrito',
 	templateUrl: './carrito.component.html',
 	styleUrls: ['./carrito.component.css'],
-	providers: [CarritoService]
 })
 export class CarritoComponent implements OnInit {
 
 	carrito: Carrito;
+	pedido: Pedido;
 
 	constructor(
 		private carritoService: CarritoService,
+		private pedidoService: PedidoService,
 		private router: Router,
-		private _route: ActivatedRoute
+		private toastr: ToastrService
 	) { }
 
 	ngOnInit(): void {
 		this.verCarrito();
+		this.verPedido();
 	}
 
 	verCarrito() {
@@ -35,15 +40,43 @@ export class CarritoComponent implements OnInit {
 		)
 	}
 
-	agregarAlCarrito() {
-		let id = this._route.snapshot.paramMap.get('id');
-		this.carritoService.agregarAlCarrito(id).subscribe(
+	confirmarCompra() {
+		this.carritoService.confirmarCompra(this.carrito.idUsuario).subscribe(
 			data => {
-				console.log("Se agrergo el juego", id);
+				console.log(data);
+				this.pedido = data;
+				this.toastr.success("La compra se realizo con exito.", "Carrito confirmado");
+				this.verCarrito();
 			},
 			error => {
 				console.log(error);
 			}
 		)
 	}
+
+	eliminarDelCarrito(id: string) {
+		this.carritoService.eliminarDelCarrito(id).subscribe(
+			data => {
+				console.log("Videojuego eliminado");
+				this.toastr.success("El videojuego fue eliminado del carrito.", "Videojuego eliminado");
+				this.verCarrito();
+			},
+			error => {
+				console.log(error);
+			}
+		)
+	}
+
+	verPedido() {
+		this.pedidoService.verPedido().subscribe(
+		  data => {
+			console.log(data)
+			this.pedido = data;
+		  },
+		  error => {
+			console.log(error);
+		  }
+		)
+	  }
+
 }

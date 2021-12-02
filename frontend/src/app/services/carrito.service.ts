@@ -22,4 +22,13 @@ export class CarritoService {
 	agregarAlCarrito(id: string): Observable<any> {
 		return this.httpClient.post(`${this.url}agregar-al-carrito`, { idVideoJuego: id });
 	}
+
+	confirmarCompra(id: string): Observable<any> {
+		return this.httpClient.post(`${this.url}confirmar-carrito`, { idUsuario: id });
+	}
+
+	eliminarDelCarrito(id: string): Observable<any> {
+		return this.httpClient.post(`${this.url}eliminar-del-carrito`, { idVideoJuego: id });
+	}
+
 }

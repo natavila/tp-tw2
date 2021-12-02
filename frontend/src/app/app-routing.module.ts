@@ -8,6 +8,7 @@ import { VideoJuegoDetalleComponent } from './components/video-juego-detalle/vid
 
 import { LoginGuard } from './services/login.guard';
 import { CarritoComponent } from './components/carrito/carrito.component';
+import { PedidoComponent } from './components/pedido/pedido.component';
 
 const routes: Routes = [
 	{ path: '', component: LoginComponent },
@@ -16,6 +17,7 @@ const routes: Routes = [
 	{ path: 'video-juego', component: VideoJuegoComponent },
 	{ path: 'video-juego/:id', component: VideoJuegoDetalleComponent, canActivate: [LoginGuard] },
 	{ path: 'carrito', component: CarritoComponent, canActivate: [LoginGuard] },
+	{ path: 'pedido', component: PedidoComponent, canActivate: [LoginGuard] },
 	{ path: '**', redirectTo: 'login', pathMatch: 'full' } //Cuando se ingresa una url que no existe lo redirecciona al login
 ];
 

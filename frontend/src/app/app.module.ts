@@ -17,6 +17,7 @@ import { CarritoComponent } from './components/carrito/carrito.component';
 
 import { LoginGuard } from './services/login.guard';
 import { TokenInterceptorService } from './services/token-interceptor.service';
+import { PedidoComponent } from './components/pedido/pedido.component';
 
 @NgModule({
 	declarations: [
@@ -25,7 +26,8 @@ import { TokenInterceptorService } from './services/token-interceptor.service';
 		RegistroComponent,
 		VideoJuegoComponent,
 		VideoJuegoDetalleComponent,
-  		CarritoComponent
+  		CarritoComponent,
+    PedidoComponent
 	],
 	imports: [
 		BrowserModule,

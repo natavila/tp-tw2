@@ -1,0 +1,27 @@
+<section class="py-5">
+    <div class="container px-4 px-lg-5 mt-5 text-start">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Producto</th>
+                    <th scope="col">Cantidad</th>
+                    <th scope="col">Precio</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let juego of pedido.listaDeJuegos">
+                    <td>{{juego['nombre']}}</td>
+                    <td>1</td>
+                    <td>${{juego['precio']}}</td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td></td>
+                    <td></td>
+                    <td><strong>Total: ${{pedido['precioTotal']}}</strong></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
