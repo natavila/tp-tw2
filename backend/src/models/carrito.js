@@ -8,6 +8,9 @@ const Carrito = mongoose.model('carrito', {
     listaDeJuegos: {
         type: [],
         default: []
+    },
+    imagen: {
+        type: String
     }
 });
 

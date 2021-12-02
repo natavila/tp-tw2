@@ -25,7 +25,6 @@ export class CarritoComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.verCarrito();
-		this.verPedido();
 	}
 
 	verCarrito() {
@@ -66,17 +65,5 @@ export class CarritoComponent implements OnInit {
 			}
 		)
 	}
-
-	verPedido() {
-		this.pedidoService.verPedido().subscribe(
-		  data => {
-			console.log(data)
-			this.pedido = data;
-		  },
-		  error => {
-			console.log(error);
-		  }
-		)
-	  }
 
 }
