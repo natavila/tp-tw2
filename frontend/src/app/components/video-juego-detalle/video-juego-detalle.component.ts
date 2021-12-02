@@ -53,7 +53,7 @@ export class VideoJuegoDetalleComponent implements OnInit {
 				this.router.navigate(['/video-juego']);
 			},
 			error => {
-				alert("El video juego ya existe en el carrito");
+				this.toastr.error(this.videoJuego.nombre + " ya existe en el carrito.");
 				this.router.navigate(['/video-juego']);
 				console.log(error);
 			}

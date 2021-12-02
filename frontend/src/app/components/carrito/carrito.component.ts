@@ -45,7 +45,7 @@ export class CarritoComponent implements OnInit {
 				console.log(data);
 				this.pedido = data;
 				this.toastr.success("La compra se realizo con exito.", "Carrito confirmado");
-				this.verCarrito();
+				this.router.navigate(['/pedido']);
 			},
 			error => {
 				console.log(error);
