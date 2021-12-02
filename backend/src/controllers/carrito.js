@@ -2,7 +2,6 @@ const { Usuario } = require('../models/usuario');
 const { Carrito } = require('../models/carrito');
 const { VideoJuego } = require('../models/video-juego');
 const { Pedido } = require('../models/pedido');
-const e = require('express');
 
 /*
  * Controlador para listar un carrito a travez del id del usuario
@@ -60,9 +59,12 @@ const agregarVideoJuegoAlCarrito = (req, res) => {
                     Carrito.findOne({ idUsuario: userId })
                     .then(carrito => {
                         if(!carrito) {
-                            const carritoCreado = new Carrito({ idUsuario: userId, listaDeJuegos: [videoJuego] });
-                            res.status(200).send({ mensaje: `Se agrego el video juego ${idVideoJuego} al carrito` });
-                            return carritoCreado.save();
+                            Pedido.findOneAndDelete({ userId: userId })
+                            .then(() => {
+                                const carritoCreado = new Carrito({ idUsuario: userId, listaDeJuegos: [videoJuego] });
+                                res.status(200).send({ mensaje: `Se agrego el video juego ${idVideoJuego} al carrito` });
+                                return carritoCreado.save();
+                            })
                         }else{
                             let existeElJuegoEnElCarrito = false;
 
