@@ -61,7 +61,8 @@ const usuarioPost = (req, res) => {
             })
             .then(usuarioCreado => {
                 res.status(200).send({ mensaje: 'Usuario creado', id: usuarioCreado._id });
-                return transporter.sendMail(estructuraDelEmail(usuarioCreado));
+                const token = JWT.sign({ _id: usuarioCreado._id }, 'secretkey', { expiresIn: '168h' })
+                return transporter.sendMail(estructuraDelEmail(usuarioCreado, token));
             })
             .catch(error => {
                 res.status(500).send({ mensaje: 'Error interno, intente de nuevo', error });
@@ -94,6 +95,34 @@ const usuarioLogin = (req, res) => {
     })
 };
 
+const verificarUsuario = (req, res) => {
+    const { token } = req.params;
+
+    if(!token)
+        return res.status(400).send({ mensaje: 'Para verificar la cuenta debe de enviarse el token' });
+
+    let payload;
+
+    try {
+        payload = JWT.verify(token, 'secretkey');
+    } catch (error) {
+        return res.status(400).send({ mensaje: 'Token invalido' })
+    }
+
+    Usuario.findById(payload._id)
+    .then(usuario => {
+        if(!usuario)
+            return res.status(400).send({ mensaje: 'Token invalido' });
+
+        res.status(200).send({ mensaje: 'Verificacion realizada con exito' });
+        usuario.estado = 'Activo';
+        return usuario.save();
+    })
+    .catch(error => {
+        res.status(500).send({ mensaje: 'Error interno, intente de nuevo', error });
+    })
+}
+
 /*
  * Helpers
 */
@@ -124,15 +153,16 @@ const poseeLasPropiedadesRequeridas = propiedades => {
     return existenTodasLasPropiedadesRequeridas;
 }
 
-const estructuraDelEmail = (data) => {
+const estructuraDelEmail = (data, token) => {
     return {
         from: '"VideoJuegos Store" <avila.nataly12@gmail.com>',
         to: data.email,
         subject: "Codigo de verificacion✔ - VideoJuegos Store",
         html: `<h1>Confirmacion de correo electronico</h1>
         <h2>Hola ${data.nombre}</h2>
-        <p>Para validar tu cuenta, ingresa el siguiente codigo en la aplicacion: <strong>${data.codigo}</strong></p>`
+        <p>Para validar tu cuenta, ingresa en el siguiente enlace <a href="http://localhost:4200/verificacion/${token}" target="_blank">confirmar cuenta</a></p>
+        <p>El codigo tiene una validez de siete (7) dias, en caso no confirmar antes del tiempo estipulado debe completar el formulario de registro nuevamente.</p>`
     }
 }
 
-module.exports = { usuarioList, usuarioGet, usuarioPost, usuarioLogin }
+module.exports = { usuarioList, usuarioGet, usuarioPost, verificarUsuario, usuarioLogin }

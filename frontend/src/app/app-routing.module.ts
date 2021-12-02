@@ -14,6 +14,7 @@ const routes: Routes = [
 	{ path: '', component: LoginComponent },
 	{ path: 'login', component: LoginComponent },
 	{ path: 'registro', component: RegistroComponent },
+	{ path: 'verificacion/:token', component: RegistroComponent },
 	{ path: 'video-juego', component: VideoJuegoComponent },
 	{ path: 'video-juego/:id', component: VideoJuegoDetalleComponent, canActivate: [LoginGuard] },
 	{ path: 'carrito', component: CarritoComponent, canActivate: [LoginGuard] },

@@ -19,4 +19,7 @@ export class RegistroService {
 		return this.http.post(this.url, usuario);
 	}
 
+	verificarUsuario(token: string): Observable<any> {
+		return this.http.get(`${this.url}verificacion/${token}`);
+	}
 }
