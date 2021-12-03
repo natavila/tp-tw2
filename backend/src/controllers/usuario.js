@@ -47,6 +47,9 @@ const usuarioPost = (req, res) => {
     if(!esEmailValido(req.body.email))
         return res.status(400).send({ mensaje: `El email ${req.body.email} es invalido` });
 
+    if(!esContrasenaValida(req.body.contrasena))
+        return res.status(400).send({ mensaje: 'La contraseña debe contener mínimo ocho caracteres, al menos una letra y un número' });
+
     Usuario.findOne({ email: req.body.email })
     .then(usuarioExistente => {
         if(usuarioExistente && usuarioExistente.estado === 'Activo')
@@ -144,6 +147,10 @@ const esEmailValido = email => {
     return email.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/);
 }
 
+const esContrasenaValida = contrasena => {
+    return contrasena.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/);
+}
+
 const poseeLasPropiedadesRequeridas = propiedades => {
     const propiedadesRequeridas = ['nombre', 'apellido', 'email', 'contrasena'];
     let existenTodasLasPropiedadesRequeridas = true;
@@ -164,7 +171,7 @@ const estructuraDelEmail = (data, token) => {
         html: `<h1>Confirmacion de correo electronico</h1>
         <h2>Hola ${data.nombre}</h2>
         <p>Para validar tu cuenta, ingresa en el siguiente enlace <a href="http://localhost:4200/verificacion/${token}" target="_blank">confirmar cuenta</a></p>
-        <p>El codigo tiene una validez de siete (7) dias, en caso no confirmar antes del tiempo estipulado debe completar el formulario de registro nuevamente.</p>`
+        <p>El codigo tiene una validez de siete (7) dias, en caso de no confirmar antes del tiempo estipulado debe completar el formulario de registro nuevamente.</p>`
     }
 }
 
