@@ -5,6 +5,7 @@ import { Pedido } from 'src/app/models/pedido';
 import { ToastrService } from 'ngx-toastr';
 import { CarritoService } from 'src/app/services/carrito.service';
 import { PedidoService } from 'src/app/services/pedido.service';
+import { LoginService } from 'src/app/services/login.service';
 
 @Component({
 	selector: 'app-carrito',
@@ -15,16 +16,18 @@ export class CarritoComponent implements OnInit {
 
 	carrito: Carrito;
 	pedido: Pedido;
+	isLogged;
 
 	constructor(
 		private carritoService: CarritoService,
-		private pedidoService: PedidoService,
+		private loginService: LoginService,
 		private router: Router,
 		private toastr: ToastrService
 	) { }
 
 	ngOnInit(): void {
 		this.verCarrito();
+		this.loggedIn();
 	}
 
 	verCarrito() {
@@ -64,6 +67,15 @@ export class CarritoComponent implements OnInit {
 				console.log(error);
 			}
 		)
+	}
+
+	logout() {
+		this.loginService.logout();
+		this.router.navigate(['/login']);
+	}
+
+	loggedIn() {
+		this.isLogged = this.loginService.loggedIn();
 	}
 
 }

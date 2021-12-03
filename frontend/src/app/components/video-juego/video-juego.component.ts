@@ -13,6 +13,7 @@ import { Router } from '@angular/router';
 export class VideoJuegoComponent implements OnInit {
 
 	videoJuegos = [];
+	isLogged;
 
 	constructor(
 		private videoJuegoService: VideoJuegoService,
@@ -22,6 +23,7 @@ export class VideoJuegoComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.listarVideoJuegos();
+		this.loggedIn();
 	}
 
 	listarVideoJuegos() {
@@ -38,5 +40,9 @@ export class VideoJuegoComponent implements OnInit {
 	logout() {
 		this.loginService.logout();
 		this.router.navigate(['/login']);
+	}
+
+	loggedIn() {
+		this.isLogged = this.loginService.loggedIn();
 	}
 }

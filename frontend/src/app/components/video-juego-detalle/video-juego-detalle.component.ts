@@ -5,6 +5,7 @@ import { Carrito } from 'src/app/models/carrito';
 import { VideoJuego } from 'src/app/models/video-juego';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { LoginService } from 'src/app/services/login.service';
 
 @Component({
 	selector: 'app-video-juego-detalle',
@@ -16,10 +17,12 @@ export class VideoJuegoDetalleComponent implements OnInit {
 
 	videoJuego: VideoJuego;
 	carrito: Carrito;
+	isLogged;
 	id = this._route.snapshot.paramMap.get('id');
 
 	constructor(private videoJuegoService: VideoJuegoService,
 		private carritoService: CarritoService,
+		private loginService: LoginService,
 		private _route: ActivatedRoute,
 		private router: Router,
 		private toastr: ToastrService) {
@@ -28,7 +31,7 @@ export class VideoJuegoDetalleComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.verDetalleVideojuego();
-
+		this.loggedIn();
 	}
 
 	verDetalleVideojuego() {
@@ -58,6 +61,15 @@ export class VideoJuegoDetalleComponent implements OnInit {
 				console.log(error);
 			}
 		)
+	}
+
+	logout() {
+		this.loginService.logout();
+		this.router.navigate(['/login']);
+	}
+
+	loggedIn() {
+		this.isLogged = this.loginService.loggedIn();
 	}
 
 }
