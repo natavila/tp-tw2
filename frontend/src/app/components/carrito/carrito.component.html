@@ -32,12 +32,10 @@
                         </li>
                         <li class="nav-item"><a class="nav-link" href="/pedido">Pedido</a></li>
                     </ul>
-                    <a [routerLink]="['/carrito']" class="d-flex">
-                        <button class="btn btn-outline-dark ml-5" type="submit">
-                            <i class="bi-cart-fill me-1"></i>
-                            Carrito
-                        </button>
-                    </a>
+                    <button class="btn btn-outline-dark ml-5">
+                        <i class="bi-cart-fill me-1"></i>
+                        <a href="/carrito">Carrito</a>
+                    </button>
                     <i (click)='logout()' class="fas fa-sign-out-alt fa-2x" style="margin-left: 15px;"></i>
                 </div>
             </div>
@@ -116,5 +114,9 @@
     <!-- Core theme JS-->
     <script src="js/scripts.js"></script>
 </body>
-
+<footer class="py-5 bg-dark">
+    <div class="container">
+        <p class="m-0 text-center text-white">Copyright &copy; VideoJuegos 2021</p>
+    </div>
+</footer>
 </html>

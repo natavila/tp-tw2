@@ -17,12 +17,10 @@
                     </li>
                     <li class="nav-item"><a class="nav-link" href="/pedido">Pedido</a></li>
                 </ul>
-                <a [routerLink]="['/carrito']" class="d-flex">
-                    <button class="btn btn-outline-dark ml-5" type="submit">
-                        <i class="bi-cart-fill me-1"></i>
-                        Carrito
-                    </button>
-                </a>
+                <button class="btn btn-outline-dark ml-5">
+                    <i class="bi-cart-fill me-1"></i>
+                    <a href="/carrito">Carrito</a>
+                </button>
                 <i (click)='logout()' class="fas fa-sign-out-alt fa-2x" style="margin-left: 15px;"></i>
             </div>
         </div>
@@ -49,6 +47,7 @@
 </ng-template>
 <section class="py-5">
     <div class="container px-4 px-lg-5 mt-5 text-start">
+        <h1>Pedido</h1>
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -79,3 +78,8 @@
         </table>
     </div>
 </section>
+<footer class="py-5 bg-dark">
+    <div class="container">
+        <p class="m-0 text-center text-white">Copyright &copy; VideoJuegos 2021</p>
+    </div>
+</footer>
