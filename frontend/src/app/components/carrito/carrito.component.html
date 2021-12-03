@@ -67,6 +67,12 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <ng-template [ngIf]="!carrito || !carrito.listaDeJuegos.length">
+                        <div class="alert alert-danger" role="alert" style="margin: 30px;">
+                            No hay juegos en el carrito.
+                          </div>
+                    </ng-template>
+                    <ng-template [ngIf]="carrito">
                     <tr *ngFor="let juego of carrito.listaDeJuegos">
                         <td><img src="{{juego['imagen']}}" alt="" style="width: 20%;"></td>
                         <td>{{juego['nombre']}}</td>
@@ -74,6 +80,7 @@
                         <td>${{juego['precio']}}</td>
                         <td><i (click)="eliminarDelCarrito(juego['_id'])" class="fas fa-trash text-danger"></i></td>
                     </tr>
+                </ng-template>
                     <tr>
                         <th></th>
                         <td></td>
@@ -85,7 +92,6 @@
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                 <button (click)="confirmarCompra()" class="btn btn-dark" type="button">Confirmar compra</button>
             </div>
-            <button class="btn btn-dark" [routerLink]="['/pedido']">Ver pedidos</button>
         </div>
     </section>
     
